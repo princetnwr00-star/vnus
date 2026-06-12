@@ -15,12 +15,12 @@ import { getFirestore, doc, setDoc, getDoc, serverTimestamp }
 //  🔴 APNA CONFIG YAHAN PASTE KARO
 // ──────────────────────────────────────────────────────────
 const firebaseConfig = {
-        apiKey: "AIzaSyCOPpUgrSI20gr1zhr_knts2if6gEFr3XE",
-        authDomain: "vnusai.firebaseapp.com",
-        projectId: "vnusai",
-        storageBucket: "vnusai.firebasestorage.app",
-        messagingSenderId: "",380179126596
-        appId: "1:380179126596:web:4904df078f13317c5f11"
+  apiKey:            "AIzaSyCOPpUgrSI20gr1zhr_knts2if6gEFr3XE",
+  authDomain:        "vnusai.firebaseapp.com",
+  projectId:         "vnusai",
+  storageBucket:     "vnusai.firebasestorage.app",
+  messagingSenderId: "380179126596",
+  appId:             "1:380179126596:web:4904df078f13317c5f11",
 };
 
 const app      = initializeApp(firebaseConfig);
