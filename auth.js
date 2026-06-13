@@ -616,38 +616,36 @@ function wireProfileDropdown() {
     }
   });
 
-  // Settings
+  // Settings — click pe window.openSettings check karo (runtime pe milega)
   const settingsBtn = $("pd-settings");
   if (settingsBtn) {
-    const fresh = settingsBtn.cloneNode(true);
-    settingsBtn.replaceWith(fresh);
-    fresh.addEventListener("click", () => {
+    settingsBtn.onclick = () => {
       closeDropdown();
-      if (window.openSettings) window.openSettings();
-    });
+      if (typeof window.openSettings === "function") {
+        window.openSettings();
+      } else {
+        showToast("Settings load ho rahi hai, dobara try karo.");
+      }
+    };
   }
 
   // Pricing
   const pricingBtn = $("pd-pricing");
   if (pricingBtn) {
-    const fresh = pricingBtn.cloneNode(true);
-    pricingBtn.replaceWith(fresh);
-    fresh.addEventListener("click", () => {
+    pricingBtn.onclick = () => {
       closeDropdown();
       showToast("💰 Pricing — Coming soon!");
-    });
+    };
   }
 
   // Logout
   const logoutBtn = $("pd-logout");
   if (logoutBtn) {
-    const fresh = logoutBtn.cloneNode(true);
-    logoutBtn.replaceWith(fresh);
-    fresh.addEventListener("click", async () => {
+    logoutBtn.onclick = async () => {
       closeDropdown();
       await signOut(auth);
       showToast("👋 Logged out successfully!");
-    });
+    };
   }
 
   // Outside click — sirf ek baar
