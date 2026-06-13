@@ -992,7 +992,7 @@ function initSettings() {
             <span class="st-sec">Danger Zone</span>
             <div class="st-dbox">
               <h3>🗑️ Delete Account</h3>
-              <p>Yeh permanent hai. Tumhara saara data hamesha ke liye delete ho jaayega.</p>
+              <p>This action is permanent and cannot be undone. Your account, profile, and all associated data will be deleted forever.</p>
               <button class="st-dbtn" id="st-delbtn">Delete My Account</button>
             </div>
           </div>
@@ -1001,10 +1001,11 @@ function initSettings() {
       <div id="dc-overlay">
         <div id="dc-box">
           <div class="dc-icon">⚠️</div>
-          <div class="dc-title">Account Delete Karen?</div>
-          <div class="dc-desc">Email login hai toh password daalo.<br/>Google login hai toh khaali chhodo.</div>
-          <input class="dc-inp" id="dc-pw" type="password" placeholder="Password (email login ke liye)"/>
+          <div class="dc-title">Delete Your Account?</div>
+          <div class="dc-desc">Enter your <strong>password</strong> to confirm.<br/>If you signed in with Google, leave it empty.</div>
+          <input class="dc-inp" id="dc-pw" type="password" placeholder="Enter your password to confirm"/>
           <div class="dc-err" id="dc-err"></div>
+          <div style="font-size:11px;color:#bbb;margin-bottom:12px;">⚠️ This will permanently delete your account and all your data from our servers.</div>
           <div class="dc-btns">
             <button class="dc-cbtn" id="dc-cancel">Cancel</button>
             <button class="dc-okbtn" id="dc-ok">Delete Forever</button>
@@ -1073,7 +1074,7 @@ function initSettings() {
         showToast("Account deleted. Goodbye! 👋");
         setTimeout(()=>window.location.reload(),2000);
       } catch(e) {
-        const errs={"auth/wrong-password":"Wrong password.","auth/too-many-requests":"Too many attempts.","auth/requires-recent-login":"Log out aur wapis login karo.","auth/popup-closed-by-user":"Google popup cancel kiya."};
+        const errs={"auth/wrong-password":"Incorrect password. Please try again.","auth/too-many-requests":"Too many attempts. Please try again later.","auth/requires-recent-login":"Please log out and log back in first.","auth/popup-closed-by-user":"Google sign-in was cancelled."};
         $("dc-err").textContent=errs[e.code]||"Error. Try again.";
         $("dc-ok").disabled=false; $("dc-ok").textContent="Delete Forever";
       }
