@@ -7,22 +7,24 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import {
   getAuth, GoogleAuthProvider, signInWithPopup,
   createUserWithEmailAndPassword, signInWithEmailAndPassword,
-  signOut, onAuthStateChanged, setPersistence, browserLocalPersistence
+  signOut, onAuthStateChanged, setPersistence, browserLocalPersistence,
+  deleteUser, reauthenticateWithCredential, EmailAuthProvider,
+  reauthenticateWithPopup
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
-  getFirestore, doc, setDoc, getDoc, serverTimestamp
+  getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // ──────────────────────────────────────────────────────────
 //  🔴 APNA CONFIG YAHAN PASTE KARO
 // ──────────────────────────────────────────────────────────
 const firebaseConfig = {
-  apiKey:            "AIzaSyCOPpUgrSI20gr1zhr_knts2if6gEFr3XE",
-  authDomain:        "vnusai.firebaseapp.com",
-  projectId:         "vnusai",
-  storageBucket:     "vnusai.firebasestorage.app",
-  messagingSenderId: "380179126596",
-  appId:             "1:380179126596:web:4904df078f13317c5f11",
+  apiKey:            "YOUR_API_KEY",
+  authDomain:        "YOUR_AUTH_DOMAIN",
+  projectId:         "YOUR_PROJECT_ID",
+  storageBucket:     "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId:             "YOUR_APP_ID",
 };
 
 const app       = initializeApp(firebaseConfig);
@@ -566,7 +568,6 @@ function buildProfileHTML(user, username) {
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
           </svg>
           Settings
-          <span class="pd-soon">Soon</span>
         </button>
         <button class="pd-item" id="pd-pricing">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -616,16 +617,12 @@ function wireProfileDropdown() {
     }
   });
 
-  // Settings — click pe window.openSettings check karo (runtime pe milega)
+  // Settings
   const settingsBtn = $("pd-settings");
   if (settingsBtn) {
     settingsBtn.onclick = () => {
       closeDropdown();
-      if (typeof window.openSettings === "function") {
-        window.openSettings();
-      } else {
-        showToast("Settings load ho rahi hai, dobara try karo.");
-      }
+      openSettings();
     };
   }
 
@@ -870,6 +867,237 @@ function init() {
       showLoggedOut();
     }
   });
+}
+
+
+// ══════════════════════════════════════════════════════════
+//  SETTINGS — styles, html, functions (all inline)
+// ══════════════════════════════════════════════════════════
+function initSettings() {
+  // Styles
+  if (!document.getElementById("st-css")) {
+    const s = document.createElement("style");
+    s.id = "st-css";
+    s.textContent = `
+      #st-overlay {
+        display:none; position:fixed; inset:0; z-index:9999;
+        background:rgba(10,60,120,0.40);
+        backdrop-filter:blur(14px);
+        align-items:center; justify-content:center; padding:16px;
+      }
+      #st-overlay.open { display:flex; animation:stFade .2s ease; }
+      @keyframes stFade { from{opacity:0} to{opacity:1} }
+      #st-box {
+        background:rgba(255,255,255,0.97);
+        border-radius:24px; width:100%; max-width:440px;
+        box-shadow:0 20px 60px rgba(0,80,180,0.18);
+        font-family:'Inter',sans-serif; overflow:hidden;
+        animation:stPop .25s cubic-bezier(.22,.68,0,1.2);
+      }
+      @keyframes stPop {
+        from{opacity:0;transform:scale(.93) translateY(14px)}
+        to  {opacity:1;transform:scale(1)   translateY(0)}
+      }
+      .st-top {
+        display:flex; align-items:center; justify-content:space-between;
+        padding:20px 22px 18px; border-bottom:1px solid rgba(0,0,0,0.07);
+      }
+      .st-top h2 { font-size:17px; font-weight:800; color:#111; margin:0; }
+      .st-xbtn {
+        width:30px; height:30px; border-radius:50%;
+        background:rgba(0,0,0,0.07); border:none;
+        font-size:16px; cursor:pointer; color:#555;
+        display:flex; align-items:center; justify-content:center;
+      }
+      .st-xbtn:hover { background:rgba(0,0,0,0.13); }
+      .st-body { padding:20px 22px; max-height:70vh; overflow-y:auto; }
+      .st-sec { font-size:11px; font-weight:700; letter-spacing:1.4px; text-transform:uppercase; color:#bbb; margin-bottom:12px; display:block; }
+      .st-row { display:flex; gap:8px; align-items:center; margin-bottom:6px; }
+      .st-inp {
+        flex:1; padding:11px 14px; box-sizing:border-box;
+        border:1.5px solid rgba(0,0,0,0.10); border-radius:12px;
+        font-size:15px; font-family:'Inter',sans-serif; color:#111; outline:none; background:white;
+      }
+      .st-inp:focus { border-color:#38b6f5; box-shadow:0 0 0 3px rgba(56,182,245,0.15); }
+      .st-sbtn {
+        padding:11px 18px; background:#111; color:white; border:none;
+        border-radius:12px; font-size:14px; font-weight:600;
+        cursor:pointer; font-family:'Inter',sans-serif; white-space:nowrap;
+        display:flex; align-items:center; gap:5px;
+      }
+      .st-sbtn:hover{opacity:.85} .st-sbtn:disabled{opacity:.45;cursor:not-allowed}
+      .st-fb { font-size:13px; border-radius:10px; padding:8px 12px; margin-top:6px; display:none; }
+      .st-fb.ok  { background:rgba(34,197,94,.12); color:#15803d; display:block; }
+      .st-fb.err { background:rgba(239,68,68,.10); color:#b91c1c; display:block; }
+      .st-hr { height:1px; background:rgba(0,0,0,0.07); margin:20px 0; }
+      .st-dbox {
+        border:1.5px solid rgba(239,68,68,0.20); border-radius:14px;
+        padding:16px; background:rgba(239,68,68,0.03);
+      }
+      .st-dbox h3 { font-size:14px; font-weight:700; color:#dc2626; margin:0 0 6px; }
+      .st-dbox p  { font-size:13px; color:#888; margin:0 0 14px; line-height:1.5; }
+      .st-dbtn {
+        width:100%; padding:12px; background:#dc2626; color:white;
+        border:none; border-radius:50px; font-size:14px; font-weight:700;
+        cursor:pointer; font-family:'Inter',sans-serif;
+        display:flex; align-items:center; justify-content:center; gap:6px;
+      }
+      .st-dbtn:hover{background:#b91c1c} .st-dbtn:disabled{opacity:.5;cursor:not-allowed}
+      #dc-overlay {
+        display:none; position:fixed; inset:0; z-index:10000;
+        background:rgba(0,0,0,0.45); backdrop-filter:blur(8px);
+        align-items:center; justify-content:center; padding:16px;
+      }
+      #dc-overlay.open { display:flex; }
+      #dc-box {
+        background:white; border-radius:20px; padding:26px 22px;
+        max-width:360px; width:100%;
+        box-shadow:0 20px 60px rgba(0,0,0,0.22);
+        font-family:'Inter',sans-serif;
+        animation:stPop .22s cubic-bezier(.22,.68,0,1.2);
+      }
+      .dc-icon{font-size:28px;text-align:center;margin-bottom:10px}
+      .dc-title{font-size:17px;font-weight:800;color:#111;text-align:center;margin-bottom:6px}
+      .dc-desc{font-size:13px;color:#777;text-align:center;line-height:1.5;margin-bottom:16px}
+      .dc-inp{width:100%;padding:11px 14px;box-sizing:border-box;border:1.5px solid rgba(0,0,0,0.12);border-radius:12px;font-size:14px;font-family:'Inter',sans-serif;outline:none;margin-bottom:6px}
+      .dc-inp:focus{border-color:#dc2626;box-shadow:0 0 0 3px rgba(220,38,38,0.12)}
+      .dc-err{font-size:12px;color:#dc2626;min-height:16px;margin-bottom:10px}
+      .dc-btns{display:flex;gap:8px}
+      .dc-cbtn{flex:1;padding:11px;background:rgba(0,0,0,0.06);border:none;border-radius:50px;font-size:14px;font-weight:600;color:#555;cursor:pointer;font-family:'Inter',sans-serif}
+      .dc-okbtn{flex:1;padding:11px;background:#dc2626;border:none;border-radius:50px;font-size:14px;font-weight:700;color:white;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:5px}
+      .dc-okbtn:hover{background:#b91c1c} .dc-okbtn:disabled{opacity:.5;cursor:not-allowed}
+      .st-spin{width:13px;height:13px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:stSpinR .7s linear infinite;flex-shrink:0}
+      @keyframes stSpinR{to{transform:rotate(360deg)}}
+    `;
+    document.head.appendChild(s);
+  }
+
+  // HTML
+  if (!document.getElementById("st-overlay")) {
+    document.body.insertAdjacentHTML("beforeend", `
+      <div id="st-overlay">
+        <div id="st-box">
+          <div class="st-top">
+            <h2>⚙️ Account Settings</h2>
+            <button class="st-xbtn" id="st-xbtn">✕</button>
+          </div>
+          <div class="st-body">
+            <span class="st-sec">Username</span>
+            <div class="st-row">
+              <input class="st-inp" id="st-uname" type="text" placeholder="Enter new username" maxlength="20"/>
+              <button class="st-sbtn" id="st-save">Save</button>
+            </div>
+            <div class="st-fb" id="st-fb"></div>
+            <div class="st-hr"></div>
+            <span class="st-sec">Danger Zone</span>
+            <div class="st-dbox">
+              <h3>🗑️ Delete Account</h3>
+              <p>Yeh permanent hai. Tumhara saara data hamesha ke liye delete ho jaayega.</p>
+              <button class="st-dbtn" id="st-delbtn">Delete My Account</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="dc-overlay">
+        <div id="dc-box">
+          <div class="dc-icon">⚠️</div>
+          <div class="dc-title">Account Delete Karen?</div>
+          <div class="dc-desc">Email login hai toh password daalo.<br/>Google login hai toh khaali chhodo.</div>
+          <input class="dc-inp" id="dc-pw" type="password" placeholder="Password (email login ke liye)"/>
+          <div class="dc-err" id="dc-err"></div>
+          <div class="dc-btns">
+            <button class="dc-cbtn" id="dc-cancel">Cancel</button>
+            <button class="dc-okbtn" id="dc-ok">Delete Forever</button>
+          </div>
+        </div>
+      </div>
+    `);
+
+    // Wire events — ek baar
+    $("st-xbtn").onclick = closeSettings;
+    $("st-overlay").onclick = e => { if(e.target===$("st-overlay")) closeSettings(); };
+
+    $("st-save").onclick = async () => {
+      const val = $("st-uname").value.trim();
+      const fb = $("st-fb");
+      fb.className = "st-fb";
+      if(val.length<3){fb.textContent="Min 3 characters.";fb.className="st-fb err";return;}
+      if(val.length>20){fb.textContent="Max 20 characters.";fb.className="st-fb err";return;}
+      if(!/^[a-zA-Z0-9_]+$/.test(val)){fb.textContent="Only letters, numbers, underscore.";fb.className="st-fb err";return;}
+      $("st-save").disabled=true;
+      $("st-save").innerHTML='<span class="st-spin"></span>Saving…';
+      try {
+        const user = auth.currentUser;
+        await updateDoc(doc(db,"users",user.uid),{username:val.toLowerCase(),usernameDisplay:val});
+        const ns = document.querySelector("#profile-btn span");
+        if(ns) ns.textContent = val;
+        const pn = document.querySelector(".pd-name");
+        if(pn) pn.textContent = "@"+val;
+        fb.textContent="✅ Username updated!"; fb.className="st-fb ok";
+        showToast("✅ Username updated!");
+      } catch(e) {
+        fb.textContent="Error. Try again."; fb.className="st-fb err";
+      } finally {
+        $("st-save").disabled=false; $("st-save").textContent="Save";
+      }
+    };
+
+    $("st-uname").onkeydown = e => { if(e.key==="Enter") $("st-save").onclick(); };
+
+    $("st-delbtn").onclick = () => {
+      $("dc-pw").value=""; $("dc-err").textContent="";
+      $("dc-overlay").classList.add("open");
+    };
+
+    $("dc-cancel").onclick = () => $("dc-overlay").classList.remove("open");
+    $("dc-overlay").onclick = e => { if(e.target===$("dc-overlay")) $("dc-overlay").classList.remove("open"); };
+
+    $("dc-ok").onclick = async () => {
+      const user = auth.currentUser; if(!user) return;
+      const pw = $("dc-pw").value;
+      $("dc-err").textContent="";
+      $("dc-ok").disabled=true;
+      $("dc-ok").innerHTML='<span class="st-spin"></span>Deleting…';
+      try {
+        const isGoogle = user.providerData.some(p=>p.providerId==="google.com");
+        if(isGoogle){
+          await reauthenticateWithPopup(user, new GoogleAuthProvider());
+        } else {
+          if(!pw){$("dc-err").textContent="Password daalo.";$("dc-ok").disabled=false;$("dc-ok").textContent="Delete Forever";return;}
+          await reauthenticateWithCredential(user, EmailAuthProvider.credential(user.email,pw));
+        }
+        await deleteDoc(doc(db,"users",user.uid)).catch(()=>{});
+        await deleteUser(user);
+        $("dc-overlay").classList.remove("open");
+        closeSettings();
+        showToast("Account deleted. Goodbye! 👋");
+        setTimeout(()=>window.location.reload(),2000);
+      } catch(e) {
+        const errs={"auth/wrong-password":"Wrong password.","auth/too-many-requests":"Too many attempts.","auth/requires-recent-login":"Log out aur wapis login karo.","auth/popup-closed-by-user":"Google popup cancel kiya."};
+        $("dc-err").textContent=errs[e.code]||"Error. Try again.";
+        $("dc-ok").disabled=false; $("dc-ok").textContent="Delete Forever";
+      }
+    };
+
+    $("dc-pw").onkeydown = e => { if(e.key==="Enter") $("dc-ok").onclick(); };
+  }
+}
+
+function openSettings() {
+  initSettings();
+  $("st-overlay").classList.add("open");
+  $("st-fb").className = "st-fb";
+  const user = auth.currentUser;
+  if(user) {
+    getDoc(doc(db,"users",user.uid)).then(snap=>{
+      if(snap.exists()) $("st-uname").value = snap.data().usernameDisplay||"";
+    }).catch(()=>{});
+  }
+}
+
+function closeSettings() {
+  const ov = $("st-overlay");
+  if(ov) ov.classList.remove("open");
 }
 
 if (document.readyState === "loading") {
