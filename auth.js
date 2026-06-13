@@ -15,12 +15,12 @@ import { getFirestore, doc, setDoc, getDoc, serverTimestamp }
 //  🔴 APNA CONFIG YAHAN PASTE KARO
 // ──────────────────────────────────────────────────────────
 const firebaseConfig = {
-  apiKey:            "AIzaSyCOPpUgrSI20gr1zhr_knts2if6gEFr3XE",
-  authDomain:        "vnusai.firebaseapp.com",
-  projectId:         "vnusai",
-  storageBucket:     "vnusai.firebasestorage.app",
-  messagingSenderId: "380179126596",
-  appId:             "1:380179126596:web:4904df078f13317c5f11",
+  apiKey:            "YOUR_API_KEY",
+  authDomain:        "YOUR_AUTH_DOMAIN",
+  projectId:         "YOUR_PROJECT_ID",
+  storageBucket:     "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId:             "YOUR_APP_ID",
 };
 
 const app      = initializeApp(firebaseConfig);
@@ -657,29 +657,34 @@ async function handleSignup() {
 // ══════════════════════════════════════════════════════════
 //  NAVBAR UPDATE
 // ══════════════════════════════════════════════════════════
-function updateNavbar(user) {
-  const loginBtns  = document.querySelectorAll(".btn-login");
-  const signupBtns = document.querySelectorAll(".btn-signup");
+async function updateNavbar(user) {
+  const { setupProfileMenu } = await import("./profile-menu.js");
+
   if (user) {
-    // Try to get username from Firestore
-    getDoc(doc(db, "users", user.uid)).then(snap => {
-      const name = snap.exists() && snap.data().usernameDisplay
-        ? snap.data().usernameDisplay
-        : (user.displayName ? user.displayName.split(" ")[0] : user.email.split("@")[0]);
-      loginBtns.forEach(b => {
-        b.textContent = name;
-        b.onclick = () => { signOut(auth); showToast("👋 Logged out."); };
-      });
-    }).catch(() => {
-      loginBtns.forEach(b => {
-        b.textContent = user.displayName ? user.displayName.split(" ")[0] : user.email.split("@")[0];
-        b.onclick = () => { signOut(auth); showToast("👋 Logged out."); };
-      });
+    let username = user.displayName ? user.displayName.split(" ")[0] : user.email.split("@")[0];
+    try {
+      const snap = await getDoc(doc(db, "users", user.uid));
+      if (snap.exists() && snap.data().usernameDisplay) {
+        username = snap.data().usernameDisplay;
+      }
+    } catch(_) {}
+
+    setupProfileMenu({
+      user,
+      username,
+      signOutFn:   () => signOut(auth),
+      showToastFn: showToast,
+      openModalFn: openModal,
     });
-    signupBtns.forEach(b => { b.style.display = "none"; });
+
   } else {
-    loginBtns.forEach(b => { b.textContent = "Login"; b.onclick = () => openModal("login"); });
-    signupBtns.forEach(b => { b.style.display = ""; b.textContent = "Sign Up"; b.onclick = () => openModal("signup"); });
+    setupProfileMenu({
+      user:        null,
+      username:    null,
+      signOutFn:   () => signOut(auth),
+      showToastFn: showToast,
+      openModalFn: openModal,
+    });
   }
 }
 
