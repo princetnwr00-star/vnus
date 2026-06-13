@@ -4,7 +4,6 @@
 // ═══════════════════════════════════════════════════════════
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { openSettings } from "./settings.js";
 import {
   getAuth, GoogleAuthProvider, signInWithPopup,
   createUserWithEmailAndPassword, signInWithEmailAndPassword,
@@ -23,7 +22,7 @@ const firebaseConfig = {
   projectId:         "vnusai",
   storageBucket:     "vnusai.firebasestorage.app",
   messagingSenderId: "380179126596",
-  appId:             ":380179126596:web:4904df078f13317c5f11",
+  appId:             "1:380179126596:web:4904df078f13317c5f11",
 };
 
 const app       = initializeApp(firebaseConfig);
@@ -624,7 +623,7 @@ function wireProfileDropdown() {
     settingsBtn.replaceWith(fresh);
     fresh.addEventListener("click", () => {
       closeDropdown();
-      openSettings();
+      if (window.openSettings) window.openSettings();
     });
   }
 
