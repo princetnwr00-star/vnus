@@ -6,7 +6,7 @@
 import { initializeApp }       from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup,
          createUserWithEmailAndPassword, signInWithEmailAndPassword,
-         signOut, onAuthStateChanged }
+         signOut, onAuthStateChanged, setPersistence, browserLocalPersistence }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -27,6 +27,9 @@ const app      = initializeApp(firebaseConfig);
 const auth     = getAuth(app);
 const db       = getFirestore(app);
 const gProvider = new GoogleAuthProvider();
+
+// ── LOCAL PERSISTENCE — session browser band hone tak bhi rahe ──
+setPersistence(auth, browserLocalPersistence).catch(console.error);
 
 // ══════════════════════════════════════════════════════════
 //  COUNTRY DATA — code + dial code
@@ -714,6 +717,11 @@ function init() {
   if (navLoginBtn)  navLoginBtn.addEventListener("click",  () => openModal("login"));
   if (navSignupBtn) navSignupBtn.addEventListener("click", () => openModal("signup"));
 
+  // ── Page load pe buttons hide karo — Firebase check hone tak ──
+  // Yahi fix hai: pehle invisible, Firebase check ke baad dikhao
+  if (navLoginBtn)  navLoginBtn.style.visibility  = "hidden";
+  if (navSignupBtn) navSignupBtn.style.visibility = "hidden";
+
   // ── Onboarding step 1 ──
   $("ob-username").addEventListener("input", () => {
     $("un-count").textContent = $("ob-username").value.length;
@@ -730,21 +738,39 @@ function init() {
   $("ob-phone").addEventListener("keydown", e => { if(e.key==="Enter") handleOb2Finish(); });
 
   // ── Auth state observer ──
-  // Yeh page refresh pe bhi chalega — Firebase session automatically restore karta hai
-  onAuthStateChanged(auth, async user => {
-    if (user) {
-      // User logged in hai (refresh ke baad bhi) — navbar update karo
-      await updateNavbar(user);
+  // auth.authStateReady() — Firebase ka PEHLA check complete hone ka wait karta hai
+  // Yahi asli fix hai — page render hone se PEHLE session pata chal jaata hai
+  auth.authStateReady().then(async () => {
+    const user = auth.currentUser;  // Synchronously milega ab
 
-      // Agar onboarding complete nahi toh show karo
+    if (user) {
+      await updateNavbar(user);
       const done = await checkOnboarding(user);
       if (!done) {
         _pendingUser = user;
         openOverlay("ob1-overlay");
       }
     } else {
-      // User logged out hai — normal buttons restore karo
       await updateNavbar(null);
+    }
+
+    // Buttons visible karo — SIRF auth check ke BAAD
+    const lb = document.getElementById("nav-login-btn");
+    const sb = document.getElementById("nav-signup-btn");
+    if (lb) lb.style.visibility = "visible";
+    if (sb) sb.style.visibility = "visible";
+  });
+
+  // Baad ke login/logout changes ke liye observer
+  onAuthStateChanged(auth, async user => {
+    if (user) {
+      await updateNavbar(user);
+    } else {
+      await updateNavbar(null);
+      const lb = document.getElementById("nav-login-btn");
+      const sb = document.getElementById("nav-signup-btn");
+      if (lb) lb.style.visibility = "visible";
+      if (sb) sb.style.visibility = "visible";
     }
   });
 }
