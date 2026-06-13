@@ -618,6 +618,9 @@ export function openSettings() {
   loadUserData();
 }
 
+// window pe expose karo taaki auth.js use kar sake
+window.openSettings = openSettings;
+
 function closeSettings() {
   $s("settings-overlay").classList.remove("open");
   clearMsg("st-photo-msg");
