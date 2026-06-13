@@ -730,8 +730,22 @@ function init() {
   $("ob-phone").addEventListener("keydown", e => { if(e.key==="Enter") handleOb2Finish(); });
 
   // ── Auth state observer ──
-  onAuthStateChanged(auth, user => {
-    updateNavbar(user);
+  // Yeh page refresh pe bhi chalega — Firebase session automatically restore karta hai
+  onAuthStateChanged(auth, async user => {
+    if (user) {
+      // User logged in hai (refresh ke baad bhi) — navbar update karo
+      await updateNavbar(user);
+
+      // Agar onboarding complete nahi toh show karo
+      const done = await checkOnboarding(user);
+      if (!done) {
+        _pendingUser = user;
+        openOverlay("ob1-overlay");
+      }
+    } else {
+      // User logged out hai — normal buttons restore karo
+      await updateNavbar(null);
+    }
   });
 }
 
