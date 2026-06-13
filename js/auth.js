@@ -15,12 +15,12 @@ import { getFirestore, doc, setDoc, getDoc, serverTimestamp }
 //  🔴 APNA CONFIG YAHAN PASTE KARO
 // ──────────────────────────────────────────────────────────
 const firebaseConfig = {
-  apiKey:            "AIzaSyCOPpUgrSI20gr1zhr_knts2if6gEFr3XE",
-  authDomain:        "vnusai.firebaseapp.com",
-  projectId:         "vnusai",
-  storageBucket:     "vnusai.firebasestorage.app",
-  messagingSenderId: "380179126596",
-  appId:             "1:380179126596:web:4904df078f13317c5f11",
+  apiKey:            "YOUR_API_KEY",
+  authDomain:        "YOUR_AUTH_DOMAIN",
+  projectId:         "YOUR_PROJECT_ID",
+  storageBucket:     "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId:             "YOUR_APP_ID",
 };
 
 const app      = initializeApp(firebaseConfig);
@@ -708,11 +708,11 @@ function init() {
   $("btn-signup").addEventListener("click", handleSignup);
   $("signup-confirm").addEventListener("keydown", e => { if(e.key==="Enter") handleSignup(); });
 
-  // Navbar buttons
-  document.querySelectorAll(".btn-login").forEach(b =>
-    b.addEventListener("click", () => openModal("login")));
-  document.querySelectorAll(".btn-signup").forEach(b =>
-    b.addEventListener("click", () => openModal("signup")));
+  // Navbar buttons — ID se target karo (reliable)
+  const navLoginBtn  = document.getElementById("nav-login-btn");
+  const navSignupBtn = document.getElementById("nav-signup-btn");
+  if (navLoginBtn)  navLoginBtn.addEventListener("click",  () => openModal("login"));
+  if (navSignupBtn) navSignupBtn.addEventListener("click", () => openModal("signup"));
 
   // ── Onboarding step 1 ──
   $("ob-username").addEventListener("input", () => {
