@@ -250,22 +250,19 @@ export function setupProfileMenu({ user, username, signOutFn, showToastFn, openM
   injectProfileStyles();
 
   if (user) {
-    // Replace login button with profile dropdown
-    const loginBtns = document.querySelectorAll(".btn-login");
-    if (loginBtns.length > 0) {
-      const target = loginBtns[0];
-      // Check if profile wrap already exists — update instead of re-create
+    // Replace login button with profile dropdown — use ID
+    const target = document.getElementById("nav-login-btn");
+    if (target) {
       const existing = document.getElementById("profile-wrap");
-      if (existing) {
-        existing.remove();
-      }
+      if (existing) existing.remove();
       const temp = document.createElement("div");
       temp.innerHTML = buildDropdownHTML(user, username);
       target.replaceWith(temp.firstElementChild);
     }
 
-    // Hide signup
-    document.querySelectorAll(".btn-signup").forEach(b => { b.style.display = "none"; });
+    // Hide signup button
+    const signupBtn = document.getElementById("nav-signup-btn");
+    if (signupBtn) signupBtn.style.display = "none";
 
     // Wire events
     const profileBtn = document.getElementById("profile-btn");
@@ -305,6 +302,21 @@ export function setupProfileMenu({ user, username, signOutFn, showToastFn, openM
     });
 
   } else {
-    restoreNavButtons(openModalFn);
+    // Restore original buttons
+    const wrap = document.getElementById("profile-wrap");
+    if (wrap) {
+      const loginBtn = document.createElement("button");
+      loginBtn.className   = "btn-login";
+      loginBtn.id          = "nav-login-btn";
+      loginBtn.textContent = "Login";
+      loginBtn.addEventListener("click", () => openModalFn("login"));
+      wrap.replaceWith(loginBtn);
+    }
+    const signupBtn = document.getElementById("nav-signup-btn");
+    if (signupBtn) {
+      signupBtn.style.display = "";
+      signupBtn.textContent   = "Sign Up";
+      signupBtn.onclick       = () => openModalFn("signup");
+    }
   }
 }
