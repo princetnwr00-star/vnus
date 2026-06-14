@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vnus AI – Dashboard</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(175deg, #38b6f5 0%, #5dc8f7 40%, #a8e0f8 100%);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ── Clouds ── */
+    .clouds-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .cloud { position: absolute; background: white; border-radius: 50px; opacity: 0.75; filter: blur(2px); }
+    .cloud::before, .cloud::after { content: ''; position: absolute; background: white; border-radius: 50%; }
+    .cloud-1 { width: 220px; height: 70px; top: 18%; right: -30px; }
+    .cloud-1::before { width: 110px; height: 90px; top: -40px; left: 30px; }
+    .cloud-1::after  { width: 80px;  height: 70px; top: -25px; left: 110px; }
+    .cloud-2 { width: 180px; height: 55px; top: 38%; right: 40px; opacity: 0.6; }
+    .cloud-2::before { width: 90px; height: 80px; top: -35px; left: 20px; }
+    .cloud-2::after  { width: 70px; height: 60px; top: -20px; left: 90px; }
+    .cloud-3 { width: 260px; height: 80px; top: 58%; right: -20px; opacity: 0.5; }
+    .cloud-3::before { width: 130px; height: 100px; top: -45px; left: 40px; }
+    .cloud-3::after  { width: 100px; height: 80px;  top: -30px; left: 140px; }
+    .cloud-4 { width: 200px; height: 65px; top: 75%; left: -20px; opacity: 0.45; }
+    .cloud-4::before { width: 100px; height: 85px; top: -38px; left: 25px; }
+    .cloud-4::after  { width: 80px;  height: 65px; top: -22px; left: 110px; }
+
+    /* ── Page ── */
+    .page { position: relative; z-index: 1; }
+
+    /* ── Navbar ── */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 28px; position: sticky; top: 0; z-index: 100;
+    }
+    .nav-left  { display: flex; align-items: center; gap: 10px; }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+
+    .logo-pill {
+      display: flex; align-items: center; gap: 8px;
+      background: white; border-radius: 50px; padding: 9px 18px 9px 12px;
+      font-weight: 700; font-size: 15px; color: #111;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.10); cursor: pointer;
+    }
+    .logo-pill svg { width: 20px; height: 20px; }
+
+    .icon-btn {
+      width: 42px; height: 42px; background: white; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.10); cursor: pointer; border: none;
+    }
+    .icon-btn svg { width: 18px; height: 18px; }
+
+    /* Profile button — filled by auth.js */
+    .btn-login {
+      background: white; border: none; border-radius: 50px;
+      padding: 10px 24px; font-weight: 600; font-size: 15px;
+      cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      color: #111; font-family: 'Inter', sans-serif;
+      visibility: hidden;
+    }
+    .btn-signup { display: none; }
+
+    /* ── Hero ── */
+    .hero { text-align: center; padding: 50px 24px 16px; }
+
+    .greeting {
+      font-size: clamp(32px, 5vw, 62px); font-weight: 900; color: white;
+      line-height: 1.08; letter-spacing: -1px;
+      text-shadow: 0 2px 24px rgba(0,80,160,0.18); margin-bottom: 12px;
+    }
+    .greeting span {
+      background: rgba(255,255,255,0.22);
+      border-radius: 16px; padding: 0 10px;
+    }
+    .hero-sub {
+      font-size: clamp(14px, 2vw, 17px); color: rgba(255,255,255,0.85);
+      margin-bottom: 32px;
+    }
+
+    /* ── AI Card ── */
+    .ai-card {
+      background: rgba(255,255,255,0.80); backdrop-filter: blur(20px);
+      border-radius: 22px; border: 1.5px solid rgba(255,255,255,0.70);
+      max-width: 760px; margin: 0 auto; overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,80,160,0.12);
+    }
+    .card-header {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 16px 20px; border-bottom: 1px solid rgba(0,0,0,0.07);
+      font-weight: 600; font-size: 15px; color: #222;
+    }
+    .card-header svg { width: 18px; height: 18px; color: #555; }
+    .card-textarea {
+      width: 100%; min-height: 130px; background: transparent; border: none;
+      outline: none; resize: none; padding: 18px 20px 10px;
+      font-size: 16px; font-family: 'Inter', sans-serif; color: #222; line-height: 1.5;
+    }
+    .card-textarea::placeholder { color: #aaa; }
+    .card-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px 14px;
+    }
+    .card-footer-left  { display: flex; align-items: center; gap: 10px; }
+    .card-footer-right { display: flex; align-items: center; gap: 10px; }
+    .attach-btn {
+      width: 36px; height: 36px; background: none; border: none;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; color: #777;
+    }
+    .attach-btn svg { width: 20px; height: 20px; }
+    .model-select-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.85); border: 1.5px solid rgba(0,0,0,0.08);
+      border-radius: 50px; padding: 6px 14px; font-size: 13px; font-weight: 600;
+      cursor: pointer; color: #222; font-family: 'Inter', sans-serif;
+    }
+    .model-select-btn svg { width: 14px; height: 14px; color: #f97316; }
+    .mic-btn, .send-btn {
+      width: 38px; height: 38px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      border: none; cursor: pointer;
+    }
+    .mic-btn { background: none; color: #666; }
+    .mic-btn svg { width: 20px; height: 20px; }
+    .send-btn { background: #444; color: white; }
+    .send-btn svg { width: 18px; height: 18px; }
+
+    /* ── Quick Pills ── */
+    .quick-pills {
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 10px; margin: 20px auto 0; max-width: 760px; padding: 0 16px;
+    }
+    .quick-pill {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.80); backdrop-filter: blur(8px);
+      border: 1.5px solid rgba(255,255,255,0.65); border-radius: 50px;
+      padding: 10px 18px; font-size: 14px; font-weight: 600; color: #1a1a1a;
+      cursor: pointer; transition: background 0.2s, transform 0.15s;
+      font-family: 'Inter', sans-serif;
+    }
+    .quick-pill:hover { background: rgba(255,255,255,0.96); transform: translateY(-1px); }
+    .badge-beta {
+      background: #3b82f6; color: white; font-size: 10px; font-weight: 700;
+      border-radius: 20px; padding: 2px 8px;
+    }
+
+    /* ── Your AI Employees Box ── */
+    .employees-section {
+      max-width: 760px; margin: 28px auto 0; padding: 0 16px;
+    }
+    .employees-box {
+      background: rgba(255,255,255,0.18);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      border-radius: 20px; padding: 24px 22px;
+    }
+    .employees-box-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .employees-box-title {
+      font-size: 15px; font-weight: 700; color: white;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .employees-box-title svg { width: 18px; height: 18px; opacity: 0.85; }
+
+    .employees-empty {
+      text-align: center; padding: 32px 16px;
+    }
+    .employees-empty-icon {
+      font-size: 42px; margin-bottom: 12px; opacity: 0.6;
+    }
+    .employees-empty-title {
+      font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.80);
+      margin-bottom: 6px;
+    }
+    .employees-empty-sub {
+      font-size: 13px; color: rgba(255,255,255,0.50); line-height: 1.5;
+    }
+
+    .footer-space { height: 60px; }
+
+    /* ── Toast ── */
+    #vnus-toast {
+      position: fixed; bottom: 28px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #111; color: white; padding: 12px 24px;
+      border-radius: 50px; font-size: 14px; font-weight: 600;
+      font-family: 'Inter', sans-serif; z-index: 99999;
+      opacity: 0; pointer-events: none; white-space: nowrap;
+      transition: transform .3s cubic-bezier(.22,.68,0,1.2), opacity .3s;
+    }
+    #vnus-toast.show {
+      transform: translateX(-50%) translateY(0); opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Clouds -->
+  <div class="clouds-bg">
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+    <div class="cloud cloud-4"></div>
+  </div>
+
+  <div class="page">
+
+    <!-- Navbar -->
+    <nav>
+      <div class="nav-left">
+        <div class="logo-pill">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 2l2.4 7.2H22l-6.2 4.5 2.4 7.2L12 16.5l-6.2 4.4 2.4-7.2L2 9.2h7.6L12 2z"
+              fill="#f97316" stroke="#f97316" stroke-width="0.5"/>
+          </svg>
+          Vnus Ai
+        </div>
+        <button class="icon-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="nav-right">
+        <button class="btn-login" id="nav-login-btn">Login</button>
+        <button class="btn-signup" id="nav-signup-btn">Sign Up</button>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="greeting" id="dash-greeting">
+        Good day, <span id="dash-name">there</span> 👋
+      </div>
+      <div class="hero-sub">What would you like to automate today?</div>
+
+      <!-- AI Card -->
+      <div class="ai-card">
+        <div class="card-header">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="7" width="20" height="14" rx="2"/>
+            <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+          </svg>
+          AI Employee
+        </div>
+        <textarea class="card-textarea"
+          placeholder="Describe the AI employee you need... e.g. 'I need a YouTube automation agent'">
+        </textarea>
+        <div class="card-footer">
+          <div class="card-footer-left">
+            <button class="attach-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+              </svg>
+            </button>
+            <button class="model-select-btn">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2l2.4 7.2H22l-6.2 4.5 2.4 7.2L12 16.5l-6.2 4.4 2.4-7.2L2 9.2h7.6L12 2z"/>
+              </svg>
+              Vnus ai
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12">
+                <path d="M6 9l6 6 6-6"/>
+              </svg>
+            </button>
+          </div>
+          <div class="card-footer-right">
+            <button class="mic-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" y1="19" x2="12" y2="23"/>
+                <line x1="8" y1="23" x2="16" y2="23"/>
+              </svg>
+            </button>
+            <button class="send-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="12" y1="19" x2="12" y2="5"/>
+                <polyline points="5 12 12 5 19 12"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Pills -->
+      <div class="quick-pills">
+        <div class="quick-pill">🕵️ Wingman <span class="badge-beta">Beta</span></div>
+        <div class="quick-pill">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+          </svg>
+          Lead Scraper
+        </div>
+        <div class="quick-pill">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+          </svg>
+          Outreach Agent
+        </div>
+        <div class="quick-pill">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+          </svg>
+          Scheduler
+        </div>
+      </div>
+    </section>
+
+    <!-- Your AI Employees -->
+    <div class="employees-section">
+      <div class="employees-box">
+        <div class="employees-box-header">
+          <div class="employees-box-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            Your AI Employees
+          </div>
+        </div>
+        <div class="employees-empty">
+          <div class="employees-empty-icon">🤖</div>
+          <div class="employees-empty-title">No AI Employees yet</div>
+          <div class="employees-empty-sub">
+            Describe what you need in the box above<br/>and hire your first AI Employee!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-space"></div>
+  </div>
+
+  <!-- Toast -->
+  <div id="vnus-toast"></div>
+
+  <!-- Auth — handles profile button, settings, pricing -->
+  <script type="module" src="auth.js"></script>
+
+  <script type="module">
+    import { getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // ── Redirect to landing if not logged in ──
+    function checkAuth() {
+      const app = getApps()[0];
+      if (!app) { setTimeout(checkAuth, 200); return; }
+      const auth = getAuth(app);
+      const db   = getFirestore(app);
+
+      auth.authStateReady().then(async () => {
+        const user = auth.currentUser;
+
+        if (!user) {
+          // Not logged in — go back to landing
+          window.location.href = "index.html";
+          return;
+        }
+
+        // Set greeting
+        const hour = new Date().getHours();
+        const greet = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+        document.getElementById("dash-greeting").innerHTML =
+          `${greet}, <span id="dash-name">there</span> 👋`;
+
+        // Get username
+        try {
+          const snap = await getDoc(doc(db, "users", user.uid));
+          const name = snap.exists() && snap.data().usernameDisplay
+            ? snap.data().usernameDisplay
+            : user.displayName
+            ? user.displayName.split(" ")[0]
+            : user.email.split("@")[0];
+          document.getElementById("dash-name").textContent = name;
+        } catch(e) {
+          const fallback = user.displayName ? user.displayName.split(" ")[0] : user.email.split("@")[0];
+          document.getElementById("dash-name").textContent = fallback;
+        }
+
+        // Show login button (will be replaced by profile dropdown via auth.js)
+        const lb = document.getElementById("nav-login-btn");
+        if (lb) lb.style.visibility = "visible";
+      });
+    }
+
+    checkAuth();
+  </script>
+
+</body>
+</html>
