@@ -6,39 +6,35 @@
   <title>Vnus AI – Dashboard</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-
     body {
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
       background: linear-gradient(175deg, #38b6f5 0%, #5dc8f7 40%, #a8e0f8 100%);
       overflow-x: hidden;
-      position: relative;
     }
 
-    /* ── Clouds ── */
+    /* Clouds */
     .clouds-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
     .cloud { position: absolute; background: white; border-radius: 50px; opacity: 0.75; filter: blur(2px); }
     .cloud::before, .cloud::after { content: ''; position: absolute; background: white; border-radius: 50%; }
     .cloud-1 { width: 220px; height: 70px; top: 18%; right: -30px; }
     .cloud-1::before { width: 110px; height: 90px; top: -40px; left: 30px; }
-    .cloud-1::after  { width: 80px;  height: 70px; top: -25px; left: 110px; }
+    .cloud-1::after  { width: 80px; height: 70px; top: -25px; left: 110px; }
     .cloud-2 { width: 180px; height: 55px; top: 38%; right: 40px; opacity: 0.6; }
     .cloud-2::before { width: 90px; height: 80px; top: -35px; left: 20px; }
     .cloud-2::after  { width: 70px; height: 60px; top: -20px; left: 90px; }
     .cloud-3 { width: 260px; height: 80px; top: 58%; right: -20px; opacity: 0.5; }
     .cloud-3::before { width: 130px; height: 100px; top: -45px; left: 40px; }
-    .cloud-3::after  { width: 100px; height: 80px;  top: -30px; left: 140px; }
+    .cloud-3::after  { width: 100px; height: 80px; top: -30px; left: 140px; }
     .cloud-4 { width: 200px; height: 65px; top: 75%; left: -20px; opacity: 0.45; }
     .cloud-4::before { width: 100px; height: 85px; top: -38px; left: 25px; }
-    .cloud-4::after  { width: 80px;  height: 65px; top: -22px; left: 110px; }
+    .cloud-4::after  { width: 80px; height: 65px; top: -22px; left: 110px; }
 
-    /* ── Page ── */
     .page { position: relative; z-index: 1; }
 
-    /* ── Navbar ── */
+    /* Navbar */
     nav {
       display: flex; align-items: center; justify-content: space-between;
       padding: 18px 28px; position: sticky; top: 0; z-index: 100;
@@ -53,7 +49,6 @@
       box-shadow: 0 2px 12px rgba(0,0,0,0.10); cursor: pointer;
     }
     .logo-pill svg { width: 20px; height: 20px; }
-
     .icon-btn {
       width: 42px; height: 42px; background: white; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
@@ -61,7 +56,7 @@
     }
     .icon-btn svg { width: 18px; height: 18px; }
 
-    /* Profile button — filled by auth.js */
+    /* Auth buttons — hidden until Firebase check */
     .btn-login {
       background: white; border: none; border-radius: 50px;
       padding: 10px 24px; font-weight: 600; font-size: 15px;
@@ -71,24 +66,24 @@
     }
     .btn-signup { display: none; }
 
-    /* ── Hero ── */
+    /* Hero */
     .hero { text-align: center; padding: 50px 24px 16px; }
-
     .greeting {
-      font-size: clamp(32px, 5vw, 62px); font-weight: 900; color: white;
+      font-size: clamp(30px, 5vw, 58px); font-weight: 900; color: white;
       line-height: 1.08; letter-spacing: -1px;
-      text-shadow: 0 2px 24px rgba(0,80,160,0.18); margin-bottom: 12px;
+      text-shadow: 0 2px 24px rgba(0,80,160,0.18); margin-bottom: 10px;
     }
-    .greeting span {
+    .greeting-name {
       background: rgba(255,255,255,0.22);
-      border-radius: 16px; padding: 0 10px;
+      border-radius: 14px; padding: 2px 12px;
+      display: inline-block;
     }
     .hero-sub {
-      font-size: clamp(14px, 2vw, 17px); color: rgba(255,255,255,0.85);
-      margin-bottom: 32px;
+      font-size: clamp(14px, 2vw, 17px);
+      color: rgba(255,255,255,0.85); margin-bottom: 32px;
     }
 
-    /* ── AI Card ── */
+    /* AI Card */
     .ai-card {
       background: rgba(255,255,255,0.80); backdrop-filter: blur(20px);
       border-radius: 22px; border: 1.5px solid rgba(255,255,255,0.70);
@@ -100,7 +95,7 @@
       padding: 16px 20px; border-bottom: 1px solid rgba(0,0,0,0.07);
       font-weight: 600; font-size: 15px; color: #222;
     }
-    .card-header svg { width: 18px; height: 18px; color: #555; }
+    .card-header svg { width: 18px; height: 18px; }
     .card-textarea {
       width: 100%; min-height: 130px; background: transparent; border: none;
       outline: none; resize: none; padding: 18px 20px 10px;
@@ -135,7 +130,7 @@
     .send-btn { background: #444; color: white; }
     .send-btn svg { width: 18px; height: 18px; }
 
-    /* ── Quick Pills ── */
+    /* Quick Pills */
     .quick-pills {
       display: flex; flex-wrap: wrap; justify-content: center;
       gap: 10px; margin: 20px auto 0; max-width: 760px; padding: 0 16px;
@@ -150,47 +145,42 @@
     }
     .quick-pill:hover { background: rgba(255,255,255,0.96); transform: translateY(-1px); }
     .badge-beta {
-      background: #3b82f6; color: white; font-size: 10px; font-weight: 700;
-      border-radius: 20px; padding: 2px 8px;
+      background: #3b82f6; color: white; font-size: 10px;
+      font-weight: 700; border-radius: 20px; padding: 2px 8px;
     }
 
-    /* ── Your AI Employees Box ── */
-    .employees-section {
+    /* AI Employees Box */
+    .emp-section {
       max-width: 760px; margin: 28px auto 0; padding: 0 16px;
     }
-    .employees-box {
-      background: rgba(255,255,255,0.18);
+    .emp-box {
+      background: rgba(255,255,255,0.15);
       backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      border: 1.5px solid rgba(255,255,255,0.35);
-      border-radius: 20px; padding: 24px 22px;
+      border: 1.5px solid rgba(255,255,255,0.30);
+      border-radius: 20px; padding: 22px 20px;
     }
-    .employees-box-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 16px;
+    .emp-box-top {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 18px;
     }
-    .employees-box-title {
+    .emp-box-title {
       font-size: 15px; font-weight: 700; color: white;
-      display: flex; align-items: center; gap: 8px;
     }
-    .employees-box-title svg { width: 18px; height: 18px; opacity: 0.85; }
-
-    .employees-empty {
-      text-align: center; padding: 32px 16px;
+    .emp-box-title svg { width: 17px; height: 17px; }
+    .emp-empty {
+      text-align: center; padding: 28px 16px;
     }
-    .employees-empty-icon {
-      font-size: 42px; margin-bottom: 12px; opacity: 0.6;
+    .emp-empty-icon { font-size: 40px; margin-bottom: 10px; opacity: 0.55; }
+    .emp-empty-title {
+      font-size: 15px; font-weight: 700;
+      color: rgba(255,255,255,0.75); margin-bottom: 5px;
     }
-    .employees-empty-title {
-      font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.80);
-      margin-bottom: 6px;
-    }
-    .employees-empty-sub {
-      font-size: 13px; color: rgba(255,255,255,0.50); line-height: 1.5;
+    .emp-empty-sub {
+      font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.5;
     }
 
     .footer-space { height: 60px; }
 
-    /* ── Toast ── */
+    /* Toast */
     #vnus-toast {
       position: fixed; bottom: 28px; left: 50%;
       transform: translateX(-50%) translateY(80px);
@@ -200,14 +190,11 @@
       opacity: 0; pointer-events: none; white-space: nowrap;
       transition: transform .3s cubic-bezier(.22,.68,0,1.2), opacity .3s;
     }
-    #vnus-toast.show {
-      transform: translateX(-50%) translateY(0); opacity: 1;
-    }
+    #vnus-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
   </style>
 </head>
 <body>
 
-  <!-- Clouds -->
   <div class="clouds-bg">
     <div class="cloud cloud-1"></div>
     <div class="cloud cloud-2"></div>
@@ -216,11 +203,10 @@
   </div>
 
   <div class="page">
-
     <!-- Navbar -->
     <nav>
       <div class="nav-left">
-        <div class="logo-pill">
+        <div class="logo-pill" onclick="window.location.href='index.html'">
           <svg viewBox="0 0 24 24" fill="none">
             <path d="M12 2l2.4 7.2H22l-6.2 4.5 2.4 7.2L12 16.5l-6.2 4.4 2.4-7.2L2 9.2h7.6L12 2z"
               fill="#f97316" stroke="#f97316" stroke-width="0.5"/>
@@ -234,19 +220,20 @@
         </button>
       </div>
       <div class="nav-right">
-        <button class="btn-login" id="nav-login-btn">Login</button>
-        <button class="btn-signup" id="nav-signup-btn">Sign Up</button>
+        <button class="btn-login" id="nav-login-btn">Profile</button>
+        <button class="btn-signup" id="nav-signup-btn" style="display:none">Sign Up</button>
       </div>
     </nav>
 
     <!-- Hero -->
     <section class="hero">
-      <div class="greeting" id="dash-greeting">
-        Good day, <span id="dash-name">there</span> 👋
+      <div class="greeting">
+        <span id="dash-greet">Good day</span>,
+        <span class="greeting-name" id="dash-name">there</span> 👋
       </div>
       <div class="hero-sub">What would you like to automate today?</div>
 
-      <!-- AI Card -->
+      <!-- Chatbox -->
       <div class="ai-card">
         <div class="card-header">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -319,24 +306,23 @@
     </section>
 
     <!-- Your AI Employees -->
-    <div class="employees-section">
-      <div class="employees-box">
-        <div class="employees-box-header">
-          <div class="employees-box-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-              <circle cx="9" cy="7" r="4"/>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
-            Your AI Employees
-          </div>
+    <div class="emp-section">
+      <div class="emp-box">
+        <div class="emp-box-top">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="width:17px;height:17px">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <span class="emp-box-title">Your AI Employees</span>
         </div>
-        <div class="employees-empty">
-          <div class="employees-empty-icon">🤖</div>
-          <div class="employees-empty-title">No AI Employees yet</div>
-          <div class="employees-empty-sub">
-            Describe what you need in the box above<br/>and hire your first AI Employee!
+        <div class="emp-empty">
+          <div class="emp-empty-icon">🤖</div>
+          <div class="emp-empty-title">No AI Employees yet</div>
+          <div class="emp-empty-sub">
+            Describe what you need in the box above<br/>
+            and hire your first AI Employee!
           </div>
         </div>
       </div>
@@ -345,60 +331,69 @@
     <div class="footer-space"></div>
   </div>
 
-  <!-- Toast -->
   <div id="vnus-toast"></div>
 
-  <!-- Auth — handles profile button, settings, pricing -->
+  <!-- auth.js handles everything: profile dropdown, settings, pricing, redirect -->
   <script type="module" src="auth.js"></script>
 
+  <!-- Dashboard logic: greeting + auth guard -->
   <script type="module">
     import { getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // ── Redirect to landing if not logged in ──
-    function checkAuth() {
-      const app = getApps()[0];
-      if (!app) { setTimeout(checkAuth, 200); return; }
+    async function initDashboard() {
+      // Wait for Firebase app to be initialized by auth.js
+      let attempts = 0;
+      while (!getApps().length && attempts < 20) {
+        await new Promise(r => setTimeout(r, 100));
+        attempts++;
+      }
+
+      const app  = getApps()[0];
+      if (!app) { window.location.href = "index.html"; return; }
+
       const auth = getAuth(app);
       const db   = getFirestore(app);
 
-      auth.authStateReady().then(async () => {
-        const user = auth.currentUser;
+      // Wait for auth state
+      await auth.authStateReady();
+      const user = auth.currentUser;
 
-        if (!user) {
-          // Not logged in — go back to landing
-          window.location.href = "index.html";
-          return;
-        }
+      if (!user) {
+        window.location.href = "index.html";
+        return;
+      }
 
-        // Set greeting
-        const hour = new Date().getHours();
-        const greet = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
-        document.getElementById("dash-greeting").innerHTML =
-          `${greet}, <span id="dash-name">there</span> 👋`;
+      // Set greeting based on time
+      const hour = new Date().getHours();
+      const greet = hour < 12 ? "Good morning"
+                  : hour < 17 ? "Good afternoon"
+                  : "Good evening";
+      document.getElementById("dash-greet").textContent = greet;
 
-        // Get username
-        try {
-          const snap = await getDoc(doc(db, "users", user.uid));
-          const name = snap.exists() && snap.data().usernameDisplay
-            ? snap.data().usernameDisplay
-            : user.displayName
-            ? user.displayName.split(" ")[0]
-            : user.email.split("@")[0];
-          document.getElementById("dash-name").textContent = name;
-        } catch(e) {
-          const fallback = user.displayName ? user.displayName.split(" ")[0] : user.email.split("@")[0];
-          document.getElementById("dash-name").textContent = fallback;
-        }
+      // Get username from Firestore
+      try {
+        const snap = await getDoc(doc(db, "users", user.uid));
+        const name = snap.exists() && snap.data().usernameDisplay
+          ? snap.data().usernameDisplay
+          : user.displayName
+          ? user.displayName.split(" ")[0]
+          : user.email.split("@")[0];
+        document.getElementById("dash-name").textContent = name;
+      } catch(e) {
+        const fallback = user.displayName
+          ? user.displayName.split(" ")[0]
+          : user.email.split("@")[0];
+        document.getElementById("dash-name").textContent = fallback;
+      }
 
-        // Show login button (will be replaced by profile dropdown via auth.js)
-        const lb = document.getElementById("nav-login-btn");
-        if (lb) lb.style.visibility = "visible";
-      });
+      // Show nav button (auth.js will replace with profile dropdown)
+      const lb = document.getElementById("nav-login-btn");
+      if (lb) lb.style.visibility = "visible";
     }
 
-    checkAuth();
+    initDashboard();
   </script>
 
 </body>
