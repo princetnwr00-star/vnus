@@ -752,6 +752,7 @@ async function handleOb2Finish() {
     showToast(`🎉 Welcome, ${_ob1Data.username}! Your account is ready.`);
     await showLoggedIn(_pendingUser);
     _pendingUser = null; _ob1Data = {};
+    setTimeout(() => { window.location.href = "dashboard.html"; }, 1200);
   } catch(e) {
     showMsg("ob2-msg","Could not save profile. Check Firestore rules & try again.");
     console.error(e);
@@ -772,7 +773,7 @@ async function handleGoogle() {
     const done   = await checkOnboarding(user);
     closeModal();
     if (!done) { await startOnboarding(user); }
-    else { await showLoggedIn(user); showToast(`✅ Welcome back!`); }
+    else { await showLoggedIn(user); showToast(`✅ Welcome back!`); setTimeout(() => { window.location.href = "dashboard.html"; }, 800); }
   } catch(e) {
     showMsg("auth-msg", friendlyError(e.code));
   } finally {
@@ -790,6 +791,7 @@ async function handleLogin() {
     await signInWithEmailAndPassword(auth, email, password);
     showToast("✅ Logged in successfully!");
     closeModal();
+    setTimeout(() => { window.location.href = "dashboard.html"; }, 800);
   } catch(e) {
     showMsg("auth-msg", friendlyError(e.code));
   } finally {
@@ -876,270 +878,299 @@ function init() {
 function initPricing() {
   if (document.getElementById("pr-overlay")) return;
 
-  // Styles
   const s = document.createElement("style");
   s.id = "pr-css";
   s.textContent = `
     #pr-overlay {
       display:none; position:fixed; inset:0; z-index:9999;
-      background:rgba(10,60,120,0.45);
-      backdrop-filter:blur(16px);
+      background:rgba(4,10,30,0.75);
+      backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
       align-items:center; justify-content:center;
       padding:16px; overflow-y:auto;
     }
-    #pr-overlay.open { display:flex; animation:prFade .22s ease; }
+    #pr-overlay.open { display:flex; animation:prFade .25s ease; }
     @keyframes prFade { from{opacity:0} to{opacity:1} }
 
     #pr-box {
-      background:rgba(255,255,255,0.97);
-      border-radius:28px; width:100%; max-width:900px;
-      box-shadow:0 28px 80px rgba(0,80,180,0.20);
-      font-family:'Inter',sans-serif; overflow:hidden;
-      animation:prPop .28s cubic-bezier(.22,.68,0,1.2);
-      my-auto: auto;
+      width:100%; max-width:860px;
+      background:#0a0a1a;
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:28px; overflow:hidden;
+      box-shadow:0 40px 100px rgba(0,0,0,0.60), 0 0 0 1px rgba(255,255,255,0.04);
+      animation:prPop .3s cubic-bezier(.22,.68,0,1.2);
+      font-family:'Inter',sans-serif;
     }
     @keyframes prPop {
-      from{opacity:0;transform:scale(.93) translateY(16px)}
+      from{opacity:0;transform:scale(.92) translateY(18px)}
       to  {opacity:1;transform:scale(1)   translateY(0)}
     }
 
+    /* Header */
     .pr-head {
-      text-align:center; padding:36px 24px 28px;
-      background:linear-gradient(135deg,#38b6f5 0%,#0ea5e9 100%);
+      text-align:center;
+      padding:44px 28px 36px;
+      background:linear-gradient(180deg,#0f0f2e 0%,#0a0a1a 100%);
       position:relative;
+      border-bottom:1px solid rgba(255,255,255,0.06);
     }
     .pr-close {
-      position:absolute; top:16px; right:18px;
-      width:32px; height:32px; border-radius:50%;
-      background:rgba(255,255,255,0.25); border:none;
-      font-size:17px; cursor:pointer; color:white;
+      position:absolute; top:18px; right:20px;
+      width:34px; height:34px; border-radius:50%;
+      background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.10);
+      font-size:16px; cursor:pointer; color:rgba(255,255,255,0.60);
       display:flex; align-items:center; justify-content:center;
-      transition:background .15s;
+      transition:all .15s;
     }
-    .pr-close:hover { background:rgba(255,255,255,0.38); }
-    .pr-badge {
+    .pr-close:hover { background:rgba(255,255,255,0.14); color:white; }
+
+    .pr-eyebrow {
       display:inline-flex; align-items:center; gap:6px;
-      background:rgba(255,255,255,0.20); border:1.5px solid rgba(255,255,255,0.40);
-      border-radius:50px; padding:5px 14px;
-      font-size:12px; font-weight:700; color:white; letter-spacing:1px;
-      text-transform:uppercase; margin-bottom:14px;
+      background:rgba(56,182,245,0.12); border:1px solid rgba(56,182,245,0.25);
+      border-radius:50px; padding:5px 16px;
+      font-size:11px; font-weight:700; color:#38b6f5;
+      letter-spacing:1.2px; text-transform:uppercase;
+      margin-bottom:16px;
     }
     .pr-head h2 {
-      font-size:28px; font-weight:900; color:white; margin:0 0 8px;
-      letter-spacing:-0.5px;
+      font-size:clamp(24px,4vw,34px); font-weight:900; color:white;
+      margin:0 0 10px; letter-spacing:-0.8px; line-height:1.1;
     }
-    .pr-head p { font-size:15px; color:rgba(255,255,255,0.88); margin:0; }
+    .pr-head h2 em {
+      font-style:normal;
+      background:linear-gradient(90deg,#38b6f5,#818cf8);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    }
+    .pr-head p {
+      font-size:15px; color:rgba(255,255,255,0.45); margin:0;
+    }
 
+    /* Toggle billing (visual only) */
+    .pr-toggle-row {
+      display:flex; align-items:center; justify-content:center;
+      gap:10px; margin-top:22px;
+    }
+    .pr-toggle-label { font-size:13px; color:rgba(255,255,255,0.40); }
+    .pr-toggle-label.active { color:white; font-weight:600; }
+    .pr-save-badge {
+      background:linear-gradient(90deg,#22c55e,#16a34a);
+      color:white; font-size:10px; font-weight:800;
+      border-radius:50px; padding:2px 9px; letter-spacing:.5px;
+    }
+
+    /* Cards grid */
     .pr-cards {
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:0;
-      padding:0;
+      display:grid; grid-template-columns:repeat(3,1fr);
+      gap:0; padding:0;
     }
-    @media(max-width:700px) {
-      .pr-cards { grid-template-columns:1fr 1fr; }
-    }
-    @media(max-width:460px) {
-      .pr-cards { grid-template-columns:1fr; }
-    }
+    @media(max-width:640px) { .pr-cards { grid-template-columns:1fr; } }
 
     .pr-card {
-      padding:28px 20px 24px;
-      border-right:1px solid rgba(0,0,0,0.07);
-      position:relative;
-      transition:background .2s;
+      padding:32px 24px 28px;
+      border-right:1px solid rgba(255,255,255,0.06);
       display:flex; flex-direction:column;
+      position:relative; transition:background .2s;
     }
     .pr-card:last-child { border-right:none; }
-    .pr-card:hover { background:rgba(56,182,245,0.04); }
 
-    /* Popular card highlight */
-    .pr-card.popular {
-      background:linear-gradient(175deg,rgba(56,182,245,0.08),rgba(14,165,233,0.04));
+    /* Card themes */
+    .pr-card.c-std   { background:#0d0d1f; }
+    .pr-card.c-pro   {
+      background:linear-gradient(175deg,#0d1a2e,#0a1222);
+      border-right-color:rgba(56,182,245,0.15);
+      border-left:1px solid rgba(56,182,245,0.15);
     }
-    .pr-popular-badge {
-      position:absolute; top:-1px; left:50%; transform:translateX(-50%);
-      background:linear-gradient(90deg,#38b6f5,#0ea5e9);
-      color:white; font-size:10px; font-weight:800;
-      padding:4px 14px; border-radius:0 0 12px 12px;
-      letter-spacing:0.8px; text-transform:uppercase; white-space:nowrap;
+    .pr-card.c-ent   { background:linear-gradient(175deg,#1a1200,#120d00); }
+
+    /* Popular tag */
+    .pr-popular {
+      position:absolute; top:0; left:50%; transform:translateX(-50%);
+      font-size:10px; font-weight:800; letter-spacing:.8px;
+      text-transform:uppercase; padding:4px 16px;
+      border-radius:0 0 12px 12px; white-space:nowrap;
+      background:linear-gradient(90deg,#38b6f5,#0ea5e9); color:white;
+    }
+    .pr-elite-tag {
+      position:absolute; top:0; left:50%; transform:translateX(-50%);
+      font-size:10px; font-weight:800; letter-spacing:.8px;
+      text-transform:uppercase; padding:4px 16px;
+      border-radius:0 0 12px 12px; white-space:nowrap;
+      background:linear-gradient(90deg,#f59e0b,#d97706); color:white;
     }
 
-    .pr-plan-name {
-      font-size:13px; font-weight:700; letter-spacing:1.2px;
-      text-transform:uppercase; color:#aaa; margin-bottom:10px;
+    /* Plan label */
+    .pr-plan-label {
+      font-size:11px; font-weight:700; letter-spacing:1.4px;
+      text-transform:uppercase; margin-bottom:14px; margin-top:8px;
     }
+    .c-std .pr-plan-label { color:rgba(255,255,255,0.35); }
+    .c-pro .pr-plan-label { color:#38b6f5; }
+    .c-ent .pr-plan-label { color:#f59e0b; }
+
     .pr-price {
-      font-size:34px; font-weight:900; color:#111; line-height:1;
-      margin-bottom:4px; letter-spacing:-1px;
+      font-size:42px; font-weight:900; color:white; line-height:1;
+      letter-spacing:-2px; margin-bottom:4px;
     }
-    .pr-price span { font-size:16px; font-weight:600; color:#888; }
-    .pr-period { font-size:13px; color:#bbb; margin-bottom:18px; }
+    .pr-price sub { font-size:20px; font-weight:700; letter-spacing:0; vertical-align:middle; }
+    .pr-price sup { font-size:16px; font-weight:600; letter-spacing:0; vertical-align:top; margin-top:8px; display:inline-block; }
+    .pr-period { font-size:12px; color:rgba(255,255,255,0.30); margin-bottom:20px; }
 
+    /* Credits pill */
     .pr-credits {
-      display:inline-flex; align-items:center; gap:6px;
-      background:rgba(56,182,245,0.10); border-radius:50px;
-      padding:5px 12px; font-size:12px; font-weight:700;
-      color:#0ea5e9; margin-bottom:18px;
+      display:inline-flex; align-items:center; gap:7px;
+      border-radius:50px; padding:6px 14px;
+      font-size:12px; font-weight:700; margin-bottom:22px;
     }
-    .pr-credits svg { width:13px; height:13px; }
+    .c-std .pr-credits { background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.60); border:1px solid rgba(255,255,255,0.08); }
+    .c-pro .pr-credits { background:rgba(56,182,245,0.12); color:#38b6f5; border:1px solid rgba(56,182,245,0.20); }
+    .c-ent .pr-credits { background:rgba(245,158,11,0.12); color:#f59e0b; border:1px solid rgba(245,158,11,0.20); }
+    .pr-credits svg { width:12px; height:12px; }
 
-    .pr-divider { height:1px; background:rgba(0,0,0,0.07); margin-bottom:18px; }
+    .pr-divider { height:1px; background:rgba(255,255,255,0.06); margin-bottom:20px; }
 
-    .pr-features { list-style:none; padding:0; margin:0 0 24px; flex:1; }
+    /* Features */
+    .pr-features { list-style:none; padding:0; margin:0 0 26px; flex:1; }
     .pr-features li {
-      display:flex; align-items:flex-start; gap:8px;
-      font-size:13px; color:#555; line-height:1.5; margin-bottom:10px;
+      display:flex; align-items:flex-start; gap:10px;
+      font-size:13px; color:rgba(255,255,255,0.55);
+      line-height:1.55; margin-bottom:12px;
     }
-    .pr-features li .chk { color:#22c55e; font-size:14px; flex-shrink:0; margin-top:1px; }
-    .pr-features li .x   { color:#f87171; font-size:14px; flex-shrink:0; margin-top:1px; }
+    .pr-features li .ck { font-size:13px; flex-shrink:0; margin-top:1px; }
+    .c-std .pr-features li .ck { color:rgba(255,255,255,0.30); }
+    .c-pro .pr-features li .ck { color:#38b6f5; }
+    .c-ent .pr-features li .ck { color:#f59e0b; }
 
-    .pr-btn {
-      width:100%; padding:12px; border:none; border-radius:50px;
-      font-size:14px; font-weight:700; cursor:pointer;
-      font-family:'Inter',sans-serif; transition:opacity .15s, transform .12s;
+    /* CTA button */
+    .pr-cta {
+      width:100%; padding:14px; border:none; border-radius:14px;
+      font-size:14px; font-weight:800; cursor:pointer;
+      font-family:'Inter',sans-serif; letter-spacing:.3px;
+      transition:opacity .15s, transform .12s;
     }
-    .pr-btn:hover { opacity:.88; transform:translateY(-1px); }
-    .pr-btn.outline {
-      background:none; border:1.5px solid rgba(0,0,0,0.15); color:#555;
+    .pr-cta:hover { opacity:.88; transform:translateY(-1px); }
+    .c-std .pr-cta {
+      background:rgba(255,255,255,0.08); color:white;
+      border:1px solid rgba(255,255,255,0.12);
     }
-    .pr-btn.solid {
+    .c-std .pr-cta:hover { background:rgba(255,255,255,0.14); }
+    .c-pro .pr-cta {
       background:linear-gradient(135deg,#38b6f5,#0ea5e9); color:white;
+      box-shadow:0 8px 24px rgba(56,182,245,0.30);
     }
-    .pr-btn.dark {
-      background:#111; color:white;
-    }
-    .pr-btn.gold {
+    .c-ent .pr-cta {
       background:linear-gradient(135deg,#f59e0b,#d97706); color:white;
+      box-shadow:0 8px 24px rgba(245,158,11,0.25);
     }
 
+    /* Footer */
     .pr-footer {
-      text-align:center; padding:16px 24px 20px;
-      border-top:1px solid rgba(0,0,0,0.07);
-      font-size:12px; color:#bbb;
+      text-align:center; padding:18px 24px;
+      border-top:1px solid rgba(255,255,255,0.06);
+      font-size:12px; color:rgba(255,255,255,0.25);
+      display:flex; align-items:center; justify-content:center; gap:16px;
+      flex-wrap:wrap;
     }
-    .pr-footer a { color:#38b6f5; text-decoration:none; }
+    .pr-footer span { display:flex; align-items:center; gap:5px; }
   `;
   document.head.appendChild(s);
 
-  // HTML
   document.body.insertAdjacentHTML("beforeend", `
     <div id="pr-overlay">
       <div id="pr-box">
 
         <div class="pr-head">
           <button class="pr-close" id="pr-close">✕</button>
-          <div class="pr-badge">⚡ Choose Your Plan</div>
-          <h2>Simple, Transparent Pricing</h2>
-          <p>Start free. Scale as your business grows. Cancel anytime.</p>
+          <div class="pr-eyebrow">⚡ Pricing Plans</div>
+          <h2>Build AI Employees that<br/><em>work while you sleep</em></h2>
+          <p>No code required. Cancel anytime. Start automating today.</p>
+          <div class="pr-toggle-row">
+            <span class="pr-toggle-label active">Monthly</span>
+            <span class="pr-toggle-label">Annual <span class="pr-save-badge">Save 20%</span></span>
+          </div>
         </div>
 
         <div class="pr-cards">
 
-          <!-- FREE -->
-          <div class="pr-card">
-            <div class="pr-plan-name">Free</div>
-            <div class="pr-price">$0 <span></span></div>
-            <div class="pr-period">Forever free</div>
-            <div class="pr-credits">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-              5 Credits / Day
-            </div>
-            <div class="pr-divider"></div>
-            <ul class="pr-features">
-              <li><span class="chk">✓</span>5 daily credits (resets every 24h)</li>
-              <li><span class="chk">✓</span>Low-end tasks only</li>
-              <li><span class="chk">✓</span>Limited task types available</li>
-              <li><span class="chk">✓</span>Basic AI Employee access</li>
-              <li><span class="x">✗</span>No priority processing</li>
-              <li><span class="x">✗</span>No advanced agents</li>
-            </ul>
-
-          </div>
-
-          <!-- STANDARD $39 -->
-          <div class="pr-card popular">
-            <div class="pr-popular-badge">⭐ Most Popular</div>
-            <div class="pr-plan-name">Standard</div>
-            <div class="pr-price">$399 <span>/mo</span></div>
-            <div class="pr-period">Billed monthly</div>
+          <!-- STANDARD -->
+          <div class="pr-card c-std">
+            <div class="pr-plan-label">Standard</div>
+            <div class="pr-price"><sup>$</sup>399<sub>/mo</sub></div>
+            <div class="pr-period">Billed monthly · Cancel anytime</div>
             <div class="pr-credits">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
               50 Credits / Day
             </div>
             <div class="pr-divider"></div>
             <ul class="pr-features">
-              <li><span class="chk">✓</span>1500 monthly credits</li>
-              <li><span class="chk">✓</span>Standard & mid-level tasks</li>
-              <li><span class="chk">✓</span>Lead Scraper agent access</li>
-              <li><span class="chk">✓</span>Outreach Agent included</li>
-              <li><span class="chk">✓</span>Priority email support</li>
-              <li><span class="x">✗</span>No high-end tasks</li>
+              <li><span class="ck">✦</span>50 daily credits · 1,500/month</li>
+              <li><span class="ck">✦</span>Standard & mid-level AI tasks</li>
+              <li><span class="ck">✦</span>Unlimited AI Employee builds</li>
+              <li><span class="ck">✦</span>Lead Scraper & Email Writer</li>
+              <li><span class="ck">✦</span>Outreach Agent included</li>
+              <li><span class="ck">✦</span>Priority email support</li>
             </ul>
-
+            <button class="pr-cta">Get Started →</button>
           </div>
 
-          <!-- PRO $59 -->
-          <div class="pr-card">
-            <div class="pr-plan-name">Pro</div>
-            <div class="pr-price">$599 <span>/mo</span></div>
-            <div class="pr-period">Billed monthly</div>
+          <!-- PRO (Popular) -->
+          <div class="pr-card c-pro">
+            <div class="pr-popular">⭐ Most Popular</div>
+            <div class="pr-plan-label">Pro</div>
+            <div class="pr-price"><sup>$</sup>599<sub>/mo</sub></div>
+            <div class="pr-period">Billed monthly · Cancel anytime</div>
             <div class="pr-credits">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
               100 Credits / Day
             </div>
             <div class="pr-divider"></div>
             <ul class="pr-features">
-              <li><span class="chk">✓</span>3000 monthly credits</li>
-              <li><span class="chk">✓</span>All Standard features</li>
-              <li><span class="chk">✓</span>Scheduler & Wingman agents</li>
-              <li><span class="chk">✓</span>Advanced task automation</li>
-              <li><span class="chk">✓</span>Rollover unused credits (up to 20)</li>
-              <li><span class="chk">✓</span>Priority chat support</li>
+              <li><span class="ck">✦</span>100 daily credits · 3,000/month</li>
+              <li><span class="ck">✦</span>Advanced multi-step automation</li>
+              <li><span class="ck">✦</span>Full AI Employee customization</li>
+              <li><span class="ck">✦</span>Wingman & Scheduler agents</li>
+              <li><span class="ck">✦</span>Rollover up to 20 unused credits</li>
+              <li><span class="ck">✦</span>Priority chat & email support</li>
             </ul>
-
+            <button class="pr-cta">Upgrade to Pro →</button>
           </div>
 
-          <!-- ENTERPRISE $99 -->
-          <div class="pr-card">
-            <div class="pr-plan-name">Enterprise</div>
-            <div class="pr-price">$999 <span>/mo</span></div>
-            <div class="pr-period">Billed monthly</div>
+          <!-- ENTERPRISE -->
+          <div class="pr-card c-ent">
+            <div class="pr-elite-tag">👑 Top Tier</div>
+            <div class="pr-plan-label">Enterprise</div>
+            <div class="pr-price"><sup>$</sup>999<sub>/mo</sub></div>
+            <div class="pr-period">Billed monthly · Cancel anytime</div>
             <div class="pr-credits">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
               180 Credits / Day
             </div>
             <div class="pr-divider"></div>
             <ul class="pr-features">
-              <li><span class="chk">✓</span>5400 monthly credits</li>
-              <li><span class="chk">✓</span>All task types — no restrictions</li>
-              <li><span class="chk">✓</span>High-end AI agents unlocked</li>
-              <li><span class="chk">✓</span>Unlimited agent configurations</li>
-              <li><span class="chk">✓</span>Dedicated account manager</li>
-              <li><span class="chk">✓</span>Custom integrations available</li>
+              <li><span class="ck">✦</span>180 daily credits · 5,400/month</li>
+              <li><span class="ck">✦</span>All task types — zero restrictions</li>
+              <li><span class="ck">✦</span>High-end complex AI tasks</li>
+              <li><span class="ck">✦</span>Dedicated account manager</li>
+              <li><span class="ck">✦</span>Custom integrations on request</li>
+              <li><span class="ck">✦</span>White-glove onboarding included</li>
             </ul>
-
+            <button class="pr-cta">Go Enterprise →</button>
           </div>
 
         </div>
 
         <div class="pr-footer">
-          🔒 Secure payments &nbsp;·&nbsp; Cancel anytime &nbsp;·&nbsp;
-          Questions? <a href="mailto:support@vnusai.com">Contact us</a>
+          <span>🔒 Secure payments</span>
+          <span>↩ Cancel anytime</span>
+          <span>💬 24/7 support</span>
+          <span>✅ 7-day money back</span>
         </div>
 
       </div>
     </div>
   `);
 
-  // Events
   $("pr-close").onclick = closePricing;
-  $("pr-overlay").onclick = e => {
-    if (e.target === $("pr-overlay")) closePricing();
-  };
-  document.addEventListener("keydown", e => {
-    if (e.key === "Escape") closePricing();
-  });
+  $("pr-overlay").onclick = e => { if(e.target===$("pr-overlay")) closePricing(); };
+  document.addEventListener("keydown", e => { if(e.key==="Escape") closePricing(); });
 }
 
 function openPricing() {
