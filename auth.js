@@ -575,7 +575,6 @@ function buildProfileHTML(user, username) {
             <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
           </svg>
           Pricing
-          <span class="pd-soon">Soon</span>
         </button>
         <div class="pd-divider"></div>
         <button class="pd-item pd-logout" id="pd-logout">
@@ -631,7 +630,7 @@ function wireProfileDropdown() {
   if (pricingBtn) {
     pricingBtn.onclick = () => {
       closeDropdown();
-      showToast("💰 Pricing — Coming soon!");
+      openPricing();
     };
   }
 
@@ -869,6 +868,289 @@ function init() {
   });
 }
 
+
+
+// ══════════════════════════════════════════════════════════
+//  PRICING MODAL
+// ══════════════════════════════════════════════════════════
+function initPricing() {
+  if (document.getElementById("pr-overlay")) return;
+
+  // Styles
+  const s = document.createElement("style");
+  s.id = "pr-css";
+  s.textContent = `
+    #pr-overlay {
+      display:none; position:fixed; inset:0; z-index:9999;
+      background:rgba(10,60,120,0.45);
+      backdrop-filter:blur(16px);
+      align-items:center; justify-content:center;
+      padding:16px; overflow-y:auto;
+    }
+    #pr-overlay.open { display:flex; animation:prFade .22s ease; }
+    @keyframes prFade { from{opacity:0} to{opacity:1} }
+
+    #pr-box {
+      background:rgba(255,255,255,0.97);
+      border-radius:28px; width:100%; max-width:900px;
+      box-shadow:0 28px 80px rgba(0,80,180,0.20);
+      font-family:'Inter',sans-serif; overflow:hidden;
+      animation:prPop .28s cubic-bezier(.22,.68,0,1.2);
+      my-auto: auto;
+    }
+    @keyframes prPop {
+      from{opacity:0;transform:scale(.93) translateY(16px)}
+      to  {opacity:1;transform:scale(1)   translateY(0)}
+    }
+
+    .pr-head {
+      text-align:center; padding:36px 24px 28px;
+      background:linear-gradient(135deg,#38b6f5 0%,#0ea5e9 100%);
+      position:relative;
+    }
+    .pr-close {
+      position:absolute; top:16px; right:18px;
+      width:32px; height:32px; border-radius:50%;
+      background:rgba(255,255,255,0.25); border:none;
+      font-size:17px; cursor:pointer; color:white;
+      display:flex; align-items:center; justify-content:center;
+      transition:background .15s;
+    }
+    .pr-close:hover { background:rgba(255,255,255,0.38); }
+    .pr-badge {
+      display:inline-flex; align-items:center; gap:6px;
+      background:rgba(255,255,255,0.20); border:1.5px solid rgba(255,255,255,0.40);
+      border-radius:50px; padding:5px 14px;
+      font-size:12px; font-weight:700; color:white; letter-spacing:1px;
+      text-transform:uppercase; margin-bottom:14px;
+    }
+    .pr-head h2 {
+      font-size:28px; font-weight:900; color:white; margin:0 0 8px;
+      letter-spacing:-0.5px;
+    }
+    .pr-head p { font-size:15px; color:rgba(255,255,255,0.88); margin:0; }
+
+    .pr-cards {
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:0;
+      padding:0;
+    }
+    @media(max-width:700px) {
+      .pr-cards { grid-template-columns:1fr 1fr; }
+    }
+    @media(max-width:460px) {
+      .pr-cards { grid-template-columns:1fr; }
+    }
+
+    .pr-card {
+      padding:28px 20px 24px;
+      border-right:1px solid rgba(0,0,0,0.07);
+      position:relative;
+      transition:background .2s;
+      display:flex; flex-direction:column;
+    }
+    .pr-card:last-child { border-right:none; }
+    .pr-card:hover { background:rgba(56,182,245,0.04); }
+
+    /* Popular card highlight */
+    .pr-card.popular {
+      background:linear-gradient(175deg,rgba(56,182,245,0.08),rgba(14,165,233,0.04));
+    }
+    .pr-popular-badge {
+      position:absolute; top:-1px; left:50%; transform:translateX(-50%);
+      background:linear-gradient(90deg,#38b6f5,#0ea5e9);
+      color:white; font-size:10px; font-weight:800;
+      padding:4px 14px; border-radius:0 0 12px 12px;
+      letter-spacing:0.8px; text-transform:uppercase; white-space:nowrap;
+    }
+
+    .pr-plan-name {
+      font-size:13px; font-weight:700; letter-spacing:1.2px;
+      text-transform:uppercase; color:#aaa; margin-bottom:10px;
+    }
+    .pr-price {
+      font-size:34px; font-weight:900; color:#111; line-height:1;
+      margin-bottom:4px; letter-spacing:-1px;
+    }
+    .pr-price span { font-size:16px; font-weight:600; color:#888; }
+    .pr-period { font-size:13px; color:#bbb; margin-bottom:18px; }
+
+    .pr-credits {
+      display:inline-flex; align-items:center; gap:6px;
+      background:rgba(56,182,245,0.10); border-radius:50px;
+      padding:5px 12px; font-size:12px; font-weight:700;
+      color:#0ea5e9; margin-bottom:18px;
+    }
+    .pr-credits svg { width:13px; height:13px; }
+
+    .pr-divider { height:1px; background:rgba(0,0,0,0.07); margin-bottom:18px; }
+
+    .pr-features { list-style:none; padding:0; margin:0 0 24px; flex:1; }
+    .pr-features li {
+      display:flex; align-items:flex-start; gap:8px;
+      font-size:13px; color:#555; line-height:1.5; margin-bottom:10px;
+    }
+    .pr-features li .chk { color:#22c55e; font-size:14px; flex-shrink:0; margin-top:1px; }
+    .pr-features li .x   { color:#f87171; font-size:14px; flex-shrink:0; margin-top:1px; }
+
+    .pr-btn {
+      width:100%; padding:12px; border:none; border-radius:50px;
+      font-size:14px; font-weight:700; cursor:pointer;
+      font-family:'Inter',sans-serif; transition:opacity .15s, transform .12s;
+    }
+    .pr-btn:hover { opacity:.88; transform:translateY(-1px); }
+    .pr-btn.outline {
+      background:none; border:1.5px solid rgba(0,0,0,0.15); color:#555;
+    }
+    .pr-btn.solid {
+      background:linear-gradient(135deg,#38b6f5,#0ea5e9); color:white;
+    }
+    .pr-btn.dark {
+      background:#111; color:white;
+    }
+    .pr-btn.gold {
+      background:linear-gradient(135deg,#f59e0b,#d97706); color:white;
+    }
+
+    .pr-footer {
+      text-align:center; padding:16px 24px 20px;
+      border-top:1px solid rgba(0,0,0,0.07);
+      font-size:12px; color:#bbb;
+    }
+    .pr-footer a { color:#38b6f5; text-decoration:none; }
+  `;
+  document.head.appendChild(s);
+
+  // HTML
+  document.body.insertAdjacentHTML("beforeend", `
+    <div id="pr-overlay">
+      <div id="pr-box">
+
+        <div class="pr-head">
+          <button class="pr-close" id="pr-close">✕</button>
+          <div class="pr-badge">⚡ Choose Your Plan</div>
+          <h2>Simple, Transparent Pricing</h2>
+          <p>Start free. Scale as your business grows. Cancel anytime.</p>
+        </div>
+
+        <div class="pr-cards">
+
+          <!-- FREE -->
+          <div class="pr-card">
+            <div class="pr-plan-name">Free</div>
+            <div class="pr-price">$0 <span></span></div>
+            <div class="pr-period">Forever free</div>
+            <div class="pr-credits">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              5 Credits / Day
+            </div>
+            <div class="pr-divider"></div>
+            <ul class="pr-features">
+              <li><span class="chk">✓</span>5 daily credits (resets every 24h)</li>
+              <li><span class="chk">✓</span>Low-end tasks only</li>
+              <li><span class="chk">✓</span>Limited task types available</li>
+              <li><span class="chk">✓</span>Basic AI Employee access</li>
+              <li><span class="x">✗</span>No priority processing</li>
+              <li><span class="x">✗</span>No advanced agents</li>
+            </ul>
+            <button class="pr-btn outline">Current Plan</button>
+          </div>
+
+          <!-- STANDARD $39 -->
+          <div class="pr-card popular">
+            <div class="pr-popular-badge">⭐ Most Popular</div>
+            <div class="pr-plan-name">Standard</div>
+            <div class="pr-price">$399 <span>/mo</span></div>
+            <div class="pr-period">Billed monthly</div>
+            <div class="pr-credits">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              50 Credits / Month
+            </div>
+            <div class="pr-divider"></div>
+            <ul class="pr-features">
+              <li><span class="chk">✓</span>50 monthly credits</li>
+              <li><span class="chk">✓</span>Standard & mid-level tasks</li>
+              <li><span class="chk">✓</span>Lead Scraper agent access</li>
+              <li><span class="chk">✓</span>Outreach Agent included</li>
+              <li><span class="chk">✓</span>Priority email support</li>
+              <li><span class="x">✗</span>No high-end tasks</li>
+            </ul>
+            <button class="pr-btn solid">Get Started</button>
+          </div>
+
+          <!-- PRO $59 -->
+          <div class="pr-card">
+            <div class="pr-plan-name">Pro</div>
+            <div class="pr-price">$599 <span>/mo</span></div>
+            <div class="pr-period">Billed monthly</div>
+            <div class="pr-credits">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              100 Credits / Month
+            </div>
+            <div class="pr-divider"></div>
+            <ul class="pr-features">
+              <li><span class="chk">✓</span>100 monthly credits</li>
+              <li><span class="chk">✓</span>All Standard features</li>
+              <li><span class="chk">✓</span>Scheduler & Wingman agents</li>
+              <li><span class="chk">✓</span>Advanced task automation</li>
+              <li><span class="chk">✓</span>Rollover unused credits (up to 20)</li>
+              <li><span class="chk">✓</span>Priority chat support</li>
+            </ul>
+            <button class="pr-btn dark">Upgrade to Pro</button>
+          </div>
+
+          <!-- ENTERPRISE $99 -->
+          <div class="pr-card">
+            <div class="pr-plan-name">Enterprise</div>
+            <div class="pr-price">$999 <span>/mo</span></div>
+            <div class="pr-period">Billed monthly</div>
+            <div class="pr-credits">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              180 Credits / Month
+            </div>
+            <div class="pr-divider"></div>
+            <ul class="pr-features">
+              <li><span class="chk">✓</span>180 monthly credits</li>
+              <li><span class="chk">✓</span>All task types — no restrictions</li>
+              <li><span class="chk">✓</span>High-end AI agents unlocked</li>
+              <li><span class="chk">✓</span>Unlimited agent configurations</li>
+              <li><span class="chk">✓</span>Dedicated account manager</li>
+              <li><span class="chk">✓</span>Custom integrations available</li>
+            </ul>
+            <button class="pr-btn gold">Go Enterprise</button>
+          </div>
+
+        </div>
+
+        <div class="pr-footer">
+          🔒 Secure payments &nbsp;·&nbsp; Cancel anytime &nbsp;·&nbsp;
+          Questions? <a href="mailto:support@vnusai.com">Contact us</a>
+        </div>
+
+      </div>
+    </div>
+  `);
+
+  // Events
+  $("pr-close").onclick = closePricing;
+  $("pr-overlay").onclick = e => {
+    if (e.target === $("pr-overlay")) closePricing();
+  };
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") closePricing();
+  });
+}
+
+function openPricing() {
+  initPricing();
+  $("pr-overlay").classList.add("open");
+}
+
+function closePricing() {
+  const ov = $("pr-overlay");
+  if (ov) ov.classList.remove("open");
+}
 
 // ══════════════════════════════════════════════════════════
 //  SETTINGS — styles, html, functions (all inline)
