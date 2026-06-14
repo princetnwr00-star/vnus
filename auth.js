@@ -1054,7 +1054,7 @@ function initPricing() {
               <li><span class="x">✗</span>No priority processing</li>
               <li><span class="x">✗</span>No advanced agents</li>
             </ul>
-            <button class="pr-btn outline">Current Plan</button>
+
           </div>
 
           <!-- STANDARD $39 -->
@@ -1065,7 +1065,7 @@ function initPricing() {
             <div class="pr-period">Billed monthly</div>
             <div class="pr-credits">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-              50 Credits / Month
+              50 Credits / Day
             </div>
             <div class="pr-divider"></div>
             <ul class="pr-features">
@@ -1076,7 +1076,7 @@ function initPricing() {
               <li><span class="chk">✓</span>Priority email support</li>
               <li><span class="x">✗</span>No high-end tasks</li>
             </ul>
-            <button class="pr-btn solid">Get Started</button>
+
           </div>
 
           <!-- PRO $59 -->
@@ -1086,7 +1086,7 @@ function initPricing() {
             <div class="pr-period">Billed monthly</div>
             <div class="pr-credits">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-              100 Credits / Month
+              100 Credits / Day
             </div>
             <div class="pr-divider"></div>
             <ul class="pr-features">
@@ -1097,7 +1097,7 @@ function initPricing() {
               <li><span class="chk">✓</span>Rollover unused credits (up to 20)</li>
               <li><span class="chk">✓</span>Priority chat support</li>
             </ul>
-            <button class="pr-btn dark">Upgrade to Pro</button>
+
           </div>
 
           <!-- ENTERPRISE $99 -->
@@ -1107,7 +1107,7 @@ function initPricing() {
             <div class="pr-period">Billed monthly</div>
             <div class="pr-credits">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-              180 Credits / Month
+              180 Credits / Day
             </div>
             <div class="pr-divider"></div>
             <ul class="pr-features">
@@ -1118,7 +1118,7 @@ function initPricing() {
               <li><span class="chk">✓</span>Dedicated account manager</li>
               <li><span class="chk">✓</span>Custom integrations available</li>
             </ul>
-            <button class="pr-btn gold">Go Enterprise</button>
+
           </div>
 
         </div>
