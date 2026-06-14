@@ -1069,7 +1069,7 @@ function initPricing() {
             </div>
             <div class="pr-divider"></div>
             <ul class="pr-features">
-              <li><span class="chk">✓</span>50 monthly credits</li>
+              <li><span class="chk">✓</span>1500 monthly credits</li>
               <li><span class="chk">✓</span>Standard & mid-level tasks</li>
               <li><span class="chk">✓</span>Lead Scraper agent access</li>
               <li><span class="chk">✓</span>Outreach Agent included</li>
@@ -1090,7 +1090,7 @@ function initPricing() {
             </div>
             <div class="pr-divider"></div>
             <ul class="pr-features">
-              <li><span class="chk">✓</span>100 monthly credits</li>
+              <li><span class="chk">✓</span>3000 monthly credits</li>
               <li><span class="chk">✓</span>All Standard features</li>
               <li><span class="chk">✓</span>Scheduler & Wingman agents</li>
               <li><span class="chk">✓</span>Advanced task automation</li>
@@ -1111,7 +1111,7 @@ function initPricing() {
             </div>
             <div class="pr-divider"></div>
             <ul class="pr-features">
-              <li><span class="chk">✓</span>180 monthly credits</li>
+              <li><span class="chk">✓</span>5400 monthly credits</li>
               <li><span class="chk">✓</span>All task types — no restrictions</li>
               <li><span class="chk">✓</span>High-end AI agents unlocked</li>
               <li><span class="chk">✓</span>Unlimited agent configurations</li>
