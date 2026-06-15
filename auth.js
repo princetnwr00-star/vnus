@@ -886,68 +886,59 @@ function initPricing() {
       display:none; position:fixed; inset:0; z-index:9999;
       background:rgba(10,60,130,0.50);
       backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-      align-items:center; justify-content:center; padding:16px; overflow-y:auto;
+      align-items:center; justify-content:center; padding:20px;
     }
     #pr-overlay.open { display:flex; animation:prFade .22s ease; }
     @keyframes prFade { from{opacity:0} to{opacity:1} }
 
     #pr-box {
-      width:100%; max-width:820px;
-      max-height:82vh;
-      border-radius:24px; overflow:hidden;
+      width:100%; max-width:800px;
+      border-radius:22px; overflow:hidden;
       box-shadow:0 24px 60px rgba(0,80,180,0.22);
-      animation:prPop .28s cubic-bezier(.22,.68,0,1.2);
       font-family:'Inter',sans-serif;
-      background: white;
+      background:white;
       border:1px solid rgba(0,0,0,0.08);
-      display:flex; flex-direction:column;
+      animation:prPop .26s cubic-bezier(.22,.68,0,1.2);
     }
     @keyframes prPop {
-      from{opacity:0;transform:scale(.92) translateY(18px)}
+      from{opacity:0;transform:scale(.93) translateY(14px)}
       to  {opacity:1;transform:scale(1)   translateY(0)}
     }
 
-    /* Header */
     .pr-head {
-      text-align:center; padding:26px 28px 20px; position:relative;
-      background:linear-gradient(135deg,#38b6f5 0%,#0ea5e9 100%);
-      border-bottom:1px solid rgba(255,255,255,0.10);
-      flex-shrink:0;
+      text-align:center; padding:20px 28px 16px; position:relative;
+      background:linear-gradient(135deg,#38b6f5,#0ea5e9);
     }
     .pr-close {
-      position:absolute; top:18px; right:20px;
-      width:34px; height:34px; border-radius:50%;
+      position:absolute; top:14px; right:16px;
+      width:30px; height:30px; border-radius:50%;
       background:rgba(255,255,255,0.22); border:1.5px solid rgba(255,255,255,0.40);
-      font-size:16px; cursor:pointer; color:white; font-weight:700;
+      font-size:14px; cursor:pointer; color:white; font-weight:700;
       display:flex; align-items:center; justify-content:center;
-      transition:all .15s; line-height:1;
     }
     .pr-close:hover { background:rgba(255,255,255,0.38); }
-    .pr-eyebrow {
-      display:inline-flex; align-items:center; gap:6px;
-      background:rgba(255,255,255,0.20); border:1.5px solid rgba(255,255,255,0.40);
-      border-radius:50px; padding:5px 16px;
-      font-size:11px; font-weight:700; color:white;
-      letter-spacing:1.2px; text-transform:uppercase; margin-bottom:16px;
+    .pr-ey {
+      display:inline-flex; align-items:center; gap:5px;
+      background:rgba(255,255,255,0.20); border:1px solid rgba(255,255,255,0.35);
+      border-radius:50px; padding:3px 12px;
+      font-size:10px; font-weight:700; color:white;
+      letter-spacing:1px; text-transform:uppercase; margin-bottom:8px;
     }
     .pr-head h2 {
-      font-size:clamp(22px,4vw,32px); font-weight:900; color:white;
-      margin:0 0 10px; letter-spacing:-0.5px; line-height:1.15;
-      text-shadow: 0 2px 12px rgba(0,80,160,0.15);
+      font-size:18px; font-weight:900; color:white;
+      margin:0 0 4px; letter-spacing:-0.3px; line-height:1.2;
     }
-    .pr-head p { font-size:14px; color:rgba(255,255,255,0.80); margin:0; }
+    .pr-head p { font-size:12px; color:rgba(255,255,255,0.80); margin:0; }
 
-    /* Cards */
     .pr-cards {
-      display:grid; grid-template-columns:repeat(3,1fr); gap:0;
+      display:grid; grid-template-columns:repeat(3,1fr);
     }
-    @media(max-width:640px) { .pr-cards { grid-template-columns:1fr; } }
+    @media(max-width:580px) { .pr-cards { grid-template-columns:1fr; } }
 
     .pr-card {
-      padding:20px 20px 22px; display:flex;
+      padding:16px 18px 18px; display:flex;
       flex-direction:column; position:relative;
       border-right:1px solid rgba(0,0,0,0.07);
-      transition:background .2s;
     }
     .pr-card:last-child { border-right:none; }
     .pr-card.c-basic { background:#fafafa; }
@@ -958,73 +949,59 @@ function initPricing() {
     }
     .pr-card.c-elite { background:#fafafa; }
 
-    /* Tag */
     .pr-tag {
       position:absolute; top:0; left:50%; transform:translateX(-50%);
-      font-size:10px; font-weight:800; letter-spacing:.8px;
-      text-transform:uppercase; padding:4px 16px;
-      border-radius:0 0 12px 12px; white-space:nowrap;
+      font-size:9px; font-weight:800; letter-spacing:.7px;
+      text-transform:uppercase; padding:3px 12px;
+      border-radius:0 0 10px 10px; white-space:nowrap;
     }
     .pr-tag.blue { background:linear-gradient(90deg,#38b6f5,#0ea5e9); color:white; }
     .pr-tag.gold { background:linear-gradient(90deg,#f59e0b,#d97706); color:white; }
 
-    /* Employee avatar area */
-    .pr-avatar {
-      width:56px; height:56px; border-radius:16px;
+    .pr-av {
+      width:44px; height:44px; border-radius:12px;
       display:flex; align-items:center; justify-content:center;
-      font-size:26px; margin-bottom:12px; margin-top:6px;
+      font-size:22px; margin-bottom:10px; margin-top:8px;
     }
-    .c-basic .pr-avatar { background:rgba(0,0,0,0.05); }
-    .c-pro   .pr-avatar { background:rgba(56,182,245,0.10); }
-    .c-elite .pr-avatar { background:rgba(245,158,11,0.10); }
+    .c-basic .pr-av { background:rgba(0,0,0,0.05); }
+    .c-pro   .pr-av { background:rgba(56,182,245,0.10); }
+    .c-elite .pr-av { background:rgba(245,158,11,0.10); }
 
-    .pr-emp-type {
-      font-size:10px; font-weight:800; letter-spacing:1.5px;
-      text-transform:uppercase; margin-bottom:8px;
+    .pr-etype {
+      font-size:9px; font-weight:800; letter-spacing:1.3px;
+      text-transform:uppercase; margin-bottom:4px;
     }
-    .c-basic .pr-emp-type { color:#aaa; }
-    .c-pro   .pr-emp-type { color:#0ea5e9; }
-    .c-elite .pr-emp-type { color:#d97706; }
+    .c-basic .pr-etype { color:#bbb; }
+    .c-pro   .pr-etype { color:#0ea5e9; }
+    .c-elite .pr-etype { color:#d97706; }
 
-    .pr-emp-title {
-      font-size:19px; font-weight:900; color:#111;
-      margin-bottom:5px; line-height:1.1;
-    }
-    .pr-emp-sub {
-      font-size:12px; color:#777;
-      line-height:1.5; margin-bottom:14px;
-    }
+    .pr-etitle { font-size:15px; font-weight:800; color:#111; margin-bottom:4px; line-height:1.1; }
+    .pr-esub   { font-size:11px; color:#888; line-height:1.4; margin-bottom:10px; }
 
-    .pr-price {
-      font-size:32px; font-weight:900; color:#111;
-      letter-spacing:-1.5px; line-height:1; margin-bottom:4px;
-    }
-    .pr-price span { font-size:18px; font-weight:600; color:#aaa; letter-spacing:0; }
-    .pr-period { font-size:12px; color:#bbb; margin-bottom:16px; }
+    .pr-price  { font-size:26px; font-weight:900; color:#111; letter-spacing:-1px; line-height:1; margin-bottom:2px; }
+    .pr-price span { font-size:13px; font-weight:600; color:#bbb; letter-spacing:0; }
+    .pr-period { font-size:10px; color:#ccc; margin-bottom:10px; }
 
-    .pr-divider { height:1px; background:rgba(0,0,0,0.08); margin-bottom:14px; }
+    .pr-div { height:1px; background:rgba(0,0,0,0.07); margin-bottom:10px; }
 
-    .pr-features { list-style:none; padding:0; margin:0 0 0; flex:1; }
-    .pr-features li {
-      display:flex; align-items:flex-start; gap:8px;
-      font-size:12px; color:#555;
-      line-height:1.5; margin-bottom:9px;
+    .pr-feats { list-style:none; padding:0; margin:0; flex:1; }
+    .pr-feats li {
+      display:flex; align-items:flex-start; gap:7px;
+      font-size:11px; color:#555; line-height:1.4; margin-bottom:7px;
     }
-    .pr-ck { font-size:14px; flex-shrink:0; margin-top:1px; }
-    .c-basic .pr-ck { color:#aaa; }
+    .pr-ck { font-size:11px; flex-shrink:0; margin-top:1px; }
+    .c-basic .pr-ck { color:#bbb; }
     .c-pro   .pr-ck { color:#0ea5e9; }
     .c-elite .pr-ck { color:#d97706; }
 
-    /* Footer */
     .pr-footer {
-      text-align:center; padding:12px 24px 14px;
+      text-align:center; padding:10px 20px 12px;
       border-top:1px solid rgba(0,0,0,0.07);
-      font-size:12px; color:#bbb;
+      font-size:11px; color:#ccc;
       display:flex; align-items:center; justify-content:center;
-      gap:16px; flex-wrap:wrap; background:white;
-      flex-shrink:0;
+      gap:14px; flex-wrap:wrap; background:white;
     }
-    .pr-footer span { display:flex; align-items:center; gap:5px; }
+    .pr-footer span { display:flex; align-items:center; gap:4px; }
   `;
   document.head.appendChild(s);
 
@@ -1034,65 +1011,62 @@ function initPricing() {
 
         <div class="pr-head">
           <button class="pr-close" id="pr-close">✕</button>
-          <div class="pr-eyebrow">🤖 AI Employee Plans</div>
-          <h2>Hire an AI Employee<br/>that works 24/7 for you</h2>
-          <p>No experience needed on your end. Just describe the task and your AI Employee handles it.</p>
+          <div class="pr-ey">🤖 AI Employee Plans</div>
+          <h2>Hire an AI Employee that works 24/7</h2>
+          <p>Just describe the task — your AI Employee handles everything.</p>
         </div>
 
         <div class="pr-cards">
 
-          <!-- BASIC -->
           <div class="pr-card c-basic">
-            <div class="pr-avatar">🧑‍💻</div>
-            <div class="pr-emp-type">Entry Level</div>
-            <div class="pr-emp-title">Junior AI Employee</div>
-            <div class="pr-emp-sub">Fresh, fast & affordable. Handles everyday tasks without needing hand-holding.</div>
+            <div class="pr-av">🧑‍💻</div>
+            <div class="pr-etype">Entry Level</div>
+            <div class="pr-etitle">Junior AI Employee</div>
+            <div class="pr-esub">Handles everyday tasks fast & affordably. No hand-holding needed.</div>
             <div class="pr-price">$399 <span>/mo</span></div>
             <div class="pr-period">Billed monthly · Cancel anytime</div>
-            <div class="pr-divider"></div>
-            <ul class="pr-features">
-              <li><span class="pr-ck">✦</span>Build any Basic-tier AI Employee you need</li>
-              <li><span class="pr-ck">✦</span>Perfect for simple, repetitive tasks</li>
+            <div class="pr-div"></div>
+            <ul class="pr-feats">
+              <li><span class="pr-ck">✦</span>Build any Basic-tier AI Employee</li>
+              <li><span class="pr-ck">✦</span>Simple & repetitive task automation</li>
               <li><span class="pr-ck">✦</span>Works on one task at a time</li>
               <li><span class="pr-ck">✦</span>Standard processing speed</li>
               <li><span class="pr-ck">✦</span>Email support included</li>
             </ul>
           </div>
 
-          <!-- PRO -->
           <div class="pr-card c-pro">
             <div class="pr-tag blue">⭐ Most Popular</div>
-            <div class="pr-avatar">👨‍💼</div>
-            <div class="pr-emp-type">Mid Level</div>
-            <div class="pr-emp-title">Pro AI Employee</div>
-            <div class="pr-emp-sub">Experienced, versatile & reliable. Handles complex multi-step workflows with ease.</div>
+            <div class="pr-av">👨‍💼</div>
+            <div class="pr-etype">Mid Level</div>
+            <div class="pr-etitle">Pro AI Employee</div>
+            <div class="pr-esub">Versatile & experienced. Handles complex multi-step workflows.</div>
             <div class="pr-price">$599 <span>/mo</span></div>
             <div class="pr-period">Billed monthly · Cancel anytime</div>
-            <div class="pr-divider"></div>
-            <ul class="pr-features">
-              <li><span class="pr-ck">✦</span>Build any Pro-tier AI Employee you need</li>
-              <li><span class="pr-ck">✦</span>Handles complex multi-step tasks</li>
+            <div class="pr-div"></div>
+            <ul class="pr-feats">
+              <li><span class="pr-ck">✦</span>Build any Pro-tier AI Employee</li>
+              <li><span class="pr-ck">✦</span>Complex multi-step task automation</li>
               <li><span class="pr-ck">✦</span>Runs multiple tasks simultaneously</li>
-              <li><span class="pr-ck">✦</span>Faster processing & smarter decisions</li>
+              <li><span class="pr-ck">✦</span>Faster & smarter processing</li>
               <li><span class="pr-ck">✦</span>Priority chat & email support</li>
             </ul>
           </div>
 
-          <!-- ELITE -->
           <div class="pr-card c-elite">
             <div class="pr-tag gold">👑 Top Tier</div>
-            <div class="pr-avatar">🧠</div>
-            <div class="pr-emp-type">Senior Level</div>
-            <div class="pr-emp-title">Elite AI Employee</div>
-            <div class="pr-emp-sub">The most advanced AI Employee. Zero limitations, maximum intelligence, elite results.</div>
+            <div class="pr-av">🧠</div>
+            <div class="pr-etype">Senior Level</div>
+            <div class="pr-etitle">Elite AI Employee</div>
+            <div class="pr-esub">Zero limits, maximum intelligence. The most powerful option available.</div>
             <div class="pr-price">$999 <span>/mo</span></div>
             <div class="pr-period">Billed monthly · Cancel anytime</div>
-            <div class="pr-divider"></div>
-            <ul class="pr-features">
-              <li><span class="pr-ck">✦</span>Build any Elite-tier AI Employee you need</li>
-              <li><span class="pr-ck">✦</span>Zero task restrictions, full autonomy</li>
-              <li><span class="pr-ck">✦</span>Highest intelligence, best output quality</li>
-              <li><span class="pr-ck">✦</span>Dedicated account manager assigned</li>
+            <div class="pr-div"></div>
+            <ul class="pr-feats">
+              <li><span class="pr-ck">✦</span>Build any Elite-tier AI Employee</li>
+              <li><span class="pr-ck">✦</span>Zero restrictions, full autonomy</li>
+              <li><span class="pr-ck">✦</span>Highest intelligence & output quality</li>
+              <li><span class="pr-ck">✦</span>Dedicated account manager</li>
               <li><span class="pr-ck">✦</span>Custom integrations on request</li>
             </ul>
           </div>
@@ -1100,7 +1074,7 @@ function initPricing() {
         </div>
 
         <div class="pr-footer">
-          <span>🔒 Secure payments</span>
+          <span>🔒 Secure</span>
           <span>↩ Cancel anytime</span>
           <span>✅ 7-day money back</span>
           <span>💬 24/7 support</span>
