@@ -892,13 +892,15 @@ function initPricing() {
     @keyframes prFade { from{opacity:0} to{opacity:1} }
 
     #pr-box {
-      width:100%; max-width:880px;
-      border-radius:28px; overflow:hidden;
-      box-shadow:0 40px 100px rgba(0,80,180,0.25);
+      width:100%; max-width:820px;
+      max-height:82vh;
+      border-radius:24px; overflow:hidden;
+      box-shadow:0 24px 60px rgba(0,80,180,0.22);
       animation:prPop .28s cubic-bezier(.22,.68,0,1.2);
       font-family:'Inter',sans-serif;
       background: white;
       border:1px solid rgba(0,0,0,0.08);
+      display:flex; flex-direction:column;
     }
     @keyframes prPop {
       from{opacity:0;transform:scale(.92) translateY(18px)}
@@ -907,9 +909,10 @@ function initPricing() {
 
     /* Header */
     .pr-head {
-      text-align:center; padding:44px 28px 36px; position:relative;
+      text-align:center; padding:26px 28px 20px; position:relative;
       background:linear-gradient(135deg,#38b6f5 0%,#0ea5e9 100%);
       border-bottom:1px solid rgba(255,255,255,0.10);
+      flex-shrink:0;
     }
     .pr-close {
       position:absolute; top:18px; right:20px;
@@ -941,9 +944,9 @@ function initPricing() {
     @media(max-width:640px) { .pr-cards { grid-template-columns:1fr; } }
 
     .pr-card {
-      padding:36px 26px 32px; display:flex;
+      padding:20px 20px 22px; display:flex;
       flex-direction:column; position:relative;
-      border-right:1px solid rgba(255,255,255,0.07);
+      border-right:1px solid rgba(0,0,0,0.07);
       transition:background .2s;
     }
     .pr-card:last-child { border-right:none; }
@@ -967,9 +970,9 @@ function initPricing() {
 
     /* Employee avatar area */
     .pr-avatar {
-      width:72px; height:72px; border-radius:20px;
+      width:56px; height:56px; border-radius:16px;
       display:flex; align-items:center; justify-content:center;
-      font-size:34px; margin-bottom:18px; margin-top:10px;
+      font-size:26px; margin-bottom:12px; margin-top:6px;
     }
     .c-basic .pr-avatar { background:rgba(0,0,0,0.05); }
     .c-pro   .pr-avatar { background:rgba(56,182,245,0.10); }
@@ -984,28 +987,28 @@ function initPricing() {
     .c-elite .pr-emp-type { color:#d97706; }
 
     .pr-emp-title {
-      font-size:22px; font-weight:900; color:#111;
-      margin-bottom:6px; line-height:1.1;
+      font-size:19px; font-weight:900; color:#111;
+      margin-bottom:5px; line-height:1.1;
     }
     .pr-emp-sub {
-      font-size:13px; color:#777;
-      line-height:1.5; margin-bottom:20px;
+      font-size:12px; color:#777;
+      line-height:1.5; margin-bottom:14px;
     }
 
     .pr-price {
-      font-size:38px; font-weight:900; color:#111;
+      font-size:32px; font-weight:900; color:#111;
       letter-spacing:-1.5px; line-height:1; margin-bottom:4px;
     }
     .pr-price span { font-size:18px; font-weight:600; color:#aaa; letter-spacing:0; }
-    .pr-period { font-size:12px; color:#bbb; margin-bottom:24px; }
+    .pr-period { font-size:12px; color:#bbb; margin-bottom:16px; }
 
-    .pr-divider { height:1px; background:rgba(0,0,0,0.08); margin-bottom:22px; }
+    .pr-divider { height:1px; background:rgba(0,0,0,0.08); margin-bottom:14px; }
 
-    .pr-features { list-style:none; padding:0; margin:0 0 28px; flex:1; }
+    .pr-features { list-style:none; padding:0; margin:0 0 0; flex:1; }
     .pr-features li {
-      display:flex; align-items:flex-start; gap:10px;
-      font-size:13px; color:#555;
-      line-height:1.55; margin-bottom:13px;
+      display:flex; align-items:flex-start; gap:8px;
+      font-size:12px; color:#555;
+      line-height:1.5; margin-bottom:9px;
     }
     .pr-ck { font-size:14px; flex-shrink:0; margin-top:1px; }
     .c-basic .pr-ck { color:#aaa; }
@@ -1014,11 +1017,12 @@ function initPricing() {
 
     /* Footer */
     .pr-footer {
-      text-align:center; padding:16px 24px 20px;
+      text-align:center; padding:12px 24px 14px;
       border-top:1px solid rgba(0,0,0,0.07);
       font-size:12px; color:#bbb;
       display:flex; align-items:center; justify-content:center;
-      gap:20px; flex-wrap:wrap; background:white;
+      gap:16px; flex-wrap:wrap; background:white;
+      flex-shrink:0;
     }
     .pr-footer span { display:flex; align-items:center; gap:5px; }
   `;
