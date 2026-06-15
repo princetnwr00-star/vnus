@@ -641,6 +641,7 @@ function wireProfileDropdown() {
       closeDropdown();
       await signOut(auth);
       showToast("👋 Logged out successfully!");
+      setTimeout(() => { window.location.href = "index.html"; }, 800);
     };
   }
 
@@ -883,22 +884,21 @@ function initPricing() {
   s.textContent = `
     #pr-overlay {
       display:none; position:fixed; inset:0; z-index:9999;
-      background:rgba(4,10,30,0.75);
+      background:rgba(10,60,130,0.50);
       backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-      align-items:center; justify-content:center;
-      padding:16px; overflow-y:auto;
+      align-items:center; justify-content:center; padding:16px; overflow-y:auto;
     }
-    #pr-overlay.open { display:flex; animation:prFade .25s ease; }
+    #pr-overlay.open { display:flex; animation:prFade .22s ease; }
     @keyframes prFade { from{opacity:0} to{opacity:1} }
 
     #pr-box {
-      width:100%; max-width:860px;
-      background:#0a0a1a;
-      border:1px solid rgba(255,255,255,0.08);
+      width:100%; max-width:880px;
       border-radius:28px; overflow:hidden;
-      box-shadow:0 40px 100px rgba(0,0,0,0.60), 0 0 0 1px rgba(255,255,255,0.04);
-      animation:prPop .3s cubic-bezier(.22,.68,0,1.2);
+      box-shadow:0 40px 100px rgba(0,40,120,0.35);
+      animation:prPop .28s cubic-bezier(.22,.68,0,1.2);
       font-family:'Inter',sans-serif;
+      background: linear-gradient(160deg, #1a3a6e 0%, #0d2244 100%);
+      border:1px solid rgba(255,255,255,0.10);
     }
     @keyframes prPop {
       from{opacity:0;transform:scale(.92) translateY(18px)}
@@ -907,167 +907,119 @@ function initPricing() {
 
     /* Header */
     .pr-head {
-      text-align:center;
-      padding:44px 28px 36px;
-      background:linear-gradient(180deg,#0f0f2e 0%,#0a0a1a 100%);
-      position:relative;
-      border-bottom:1px solid rgba(255,255,255,0.06);
+      text-align:center; padding:44px 28px 36px; position:relative;
+      background:linear-gradient(180deg,rgba(56,182,245,0.12) 0%,transparent 100%);
+      border-bottom:1px solid rgba(255,255,255,0.07);
     }
     .pr-close {
       position:absolute; top:18px; right:20px;
       width:34px; height:34px; border-radius:50%;
-      background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.10);
-      font-size:16px; cursor:pointer; color:rgba(255,255,255,0.60);
+      background:rgba(255,255,255,0.10); border:1px solid rgba(255,255,255,0.15);
+      font-size:16px; cursor:pointer; color:rgba(255,255,255,0.70);
       display:flex; align-items:center; justify-content:center;
       transition:all .15s;
     }
-    .pr-close:hover { background:rgba(255,255,255,0.14); color:white; }
-
+    .pr-close:hover { background:rgba(255,255,255,0.20); color:white; }
     .pr-eyebrow {
       display:inline-flex; align-items:center; gap:6px;
-      background:rgba(56,182,245,0.12); border:1px solid rgba(56,182,245,0.25);
+      background:rgba(56,182,245,0.15); border:1px solid rgba(56,182,245,0.30);
       border-radius:50px; padding:5px 16px;
-      font-size:11px; font-weight:700; color:#38b6f5;
-      letter-spacing:1.2px; text-transform:uppercase;
-      margin-bottom:16px;
+      font-size:11px; font-weight:700; color:#7dd3fc;
+      letter-spacing:1.2px; text-transform:uppercase; margin-bottom:16px;
     }
     .pr-head h2 {
-      font-size:clamp(24px,4vw,34px); font-weight:900; color:white;
-      margin:0 0 10px; letter-spacing:-0.8px; line-height:1.1;
+      font-size:clamp(22px,4vw,32px); font-weight:900; color:white;
+      margin:0 0 10px; letter-spacing:-0.5px; line-height:1.15;
     }
-    .pr-head h2 em {
-      font-style:normal;
-      background:linear-gradient(90deg,#38b6f5,#818cf8);
-      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-    }
-    .pr-head p {
-      font-size:15px; color:rgba(255,255,255,0.45); margin:0;
-    }
+    .pr-head p { font-size:14px; color:rgba(255,255,255,0.50); margin:0; }
 
-    /* Toggle billing (visual only) */
-    .pr-toggle-row {
-      display:flex; align-items:center; justify-content:center;
-      gap:10px; margin-top:22px;
-    }
-    .pr-toggle-label { font-size:13px; color:rgba(255,255,255,0.40); }
-    .pr-toggle-label.active { color:white; font-weight:600; }
-    .pr-save-badge {
-      background:linear-gradient(90deg,#22c55e,#16a34a);
-      color:white; font-size:10px; font-weight:800;
-      border-radius:50px; padding:2px 9px; letter-spacing:.5px;
-    }
-
-    /* Cards grid */
+    /* Cards */
     .pr-cards {
-      display:grid; grid-template-columns:repeat(3,1fr);
-      gap:0; padding:0;
+      display:grid; grid-template-columns:repeat(3,1fr); gap:0;
     }
     @media(max-width:640px) { .pr-cards { grid-template-columns:1fr; } }
 
     .pr-card {
-      padding:32px 24px 28px;
-      border-right:1px solid rgba(255,255,255,0.06);
-      display:flex; flex-direction:column;
-      position:relative; transition:background .2s;
+      padding:36px 26px 32px; display:flex;
+      flex-direction:column; position:relative;
+      border-right:1px solid rgba(255,255,255,0.07);
+      transition:background .2s;
     }
     .pr-card:last-child { border-right:none; }
-
-    /* Card themes */
-    .pr-card.c-std   { background:#0d0d1f; }
+    .pr-card.c-basic { background:rgba(255,255,255,0.03); }
     .pr-card.c-pro   {
-      background:linear-gradient(175deg,#0d1a2e,#0a1222);
-      border-right-color:rgba(56,182,245,0.15);
-      border-left:1px solid rgba(56,182,245,0.15);
+      background:rgba(56,182,245,0.08);
+      border-left:1px solid rgba(56,182,245,0.20);
+      border-right:1px solid rgba(56,182,245,0.20);
     }
-    .pr-card.c-ent   { background:linear-gradient(175deg,#1a1200,#120d00); }
+    .pr-card.c-elite {
+      background:rgba(255,255,255,0.04);
+    }
 
-    /* Popular tag */
-    .pr-popular {
+    /* Tag */
+    .pr-tag {
       position:absolute; top:0; left:50%; transform:translateX(-50%);
       font-size:10px; font-weight:800; letter-spacing:.8px;
       text-transform:uppercase; padding:4px 16px;
       border-radius:0 0 12px 12px; white-space:nowrap;
-      background:linear-gradient(90deg,#38b6f5,#0ea5e9); color:white;
     }
-    .pr-elite-tag {
-      position:absolute; top:0; left:50%; transform:translateX(-50%);
-      font-size:10px; font-weight:800; letter-spacing:.8px;
-      text-transform:uppercase; padding:4px 16px;
-      border-radius:0 0 12px 12px; white-space:nowrap;
-      background:linear-gradient(90deg,#f59e0b,#d97706); color:white;
-    }
+    .pr-tag.blue { background:linear-gradient(90deg,#38b6f5,#0ea5e9); color:white; }
+    .pr-tag.gold { background:linear-gradient(90deg,#f59e0b,#d97706); color:white; }
 
-    /* Plan label */
-    .pr-plan-label {
-      font-size:11px; font-weight:700; letter-spacing:1.4px;
-      text-transform:uppercase; margin-bottom:14px; margin-top:8px;
+    /* Employee avatar area */
+    .pr-avatar {
+      width:72px; height:72px; border-radius:20px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:34px; margin-bottom:18px; margin-top:10px;
     }
-    .c-std .pr-plan-label { color:rgba(255,255,255,0.35); }
-    .c-pro .pr-plan-label { color:#38b6f5; }
-    .c-ent .pr-plan-label { color:#f59e0b; }
+    .c-basic .pr-avatar { background:rgba(255,255,255,0.08); }
+    .c-pro   .pr-avatar { background:rgba(56,182,245,0.15); }
+    .c-elite .pr-avatar { background:rgba(245,158,11,0.15); }
+
+    .pr-emp-type {
+      font-size:10px; font-weight:800; letter-spacing:1.5px;
+      text-transform:uppercase; margin-bottom:8px;
+    }
+    .c-basic .pr-emp-type { color:rgba(255,255,255,0.35); }
+    .c-pro   .pr-emp-type { color:#38b6f5; }
+    .c-elite .pr-emp-type { color:#f59e0b; }
+
+    .pr-emp-title {
+      font-size:22px; font-weight:900; color:white;
+      margin-bottom:6px; line-height:1.1;
+    }
+    .pr-emp-sub {
+      font-size:13px; color:rgba(255,255,255,0.45);
+      line-height:1.5; margin-bottom:20px;
+    }
 
     .pr-price {
-      font-size:42px; font-weight:900; color:white; line-height:1;
-      letter-spacing:-2px; margin-bottom:4px;
+      font-size:38px; font-weight:900; color:white;
+      letter-spacing:-1.5px; line-height:1; margin-bottom:4px;
     }
-    .pr-price sub { font-size:20px; font-weight:700; letter-spacing:0; vertical-align:middle; }
-    .pr-price sup { font-size:16px; font-weight:600; letter-spacing:0; vertical-align:top; margin-top:8px; display:inline-block; }
-    .pr-period { font-size:12px; color:rgba(255,255,255,0.30); margin-bottom:20px; }
+    .pr-price span { font-size:18px; font-weight:600; color:rgba(255,255,255,0.50); letter-spacing:0; }
+    .pr-period { font-size:12px; color:rgba(255,255,255,0.30); margin-bottom:24px; }
 
-    /* Credits pill */
-    .pr-credits {
-      display:inline-flex; align-items:center; gap:7px;
-      border-radius:50px; padding:6px 14px;
-      font-size:12px; font-weight:700; margin-bottom:22px;
-    }
-    .c-std .pr-credits { background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.60); border:1px solid rgba(255,255,255,0.08); }
-    .c-pro .pr-credits { background:rgba(56,182,245,0.12); color:#38b6f5; border:1px solid rgba(56,182,245,0.20); }
-    .c-ent .pr-credits { background:rgba(245,158,11,0.12); color:#f59e0b; border:1px solid rgba(245,158,11,0.20); }
-    .pr-credits svg { width:12px; height:12px; }
+    .pr-divider { height:1px; background:rgba(255,255,255,0.07); margin-bottom:22px; }
 
-    .pr-divider { height:1px; background:rgba(255,255,255,0.06); margin-bottom:20px; }
-
-    /* Features */
-    .pr-features { list-style:none; padding:0; margin:0 0 26px; flex:1; }
+    .pr-features { list-style:none; padding:0; margin:0 0 28px; flex:1; }
     .pr-features li {
       display:flex; align-items:flex-start; gap:10px;
-      font-size:13px; color:rgba(255,255,255,0.55);
-      line-height:1.55; margin-bottom:12px;
+      font-size:13px; color:rgba(255,255,255,0.60);
+      line-height:1.55; margin-bottom:13px;
     }
-    .pr-features li .ck { font-size:13px; flex-shrink:0; margin-top:1px; }
-    .c-std .pr-features li .ck { color:rgba(255,255,255,0.30); }
-    .c-pro .pr-features li .ck { color:#38b6f5; }
-    .c-ent .pr-features li .ck { color:#f59e0b; }
-
-    /* CTA button */
-    .pr-cta {
-      width:100%; padding:14px; border:none; border-radius:14px;
-      font-size:14px; font-weight:800; cursor:pointer;
-      font-family:'Inter',sans-serif; letter-spacing:.3px;
-      transition:opacity .15s, transform .12s;
-    }
-    .pr-cta:hover { opacity:.88; transform:translateY(-1px); }
-    .c-std .pr-cta {
-      background:rgba(255,255,255,0.08); color:white;
-      border:1px solid rgba(255,255,255,0.12);
-    }
-    .c-std .pr-cta:hover { background:rgba(255,255,255,0.14); }
-    .c-pro .pr-cta {
-      background:linear-gradient(135deg,#38b6f5,#0ea5e9); color:white;
-      box-shadow:0 8px 24px rgba(56,182,245,0.30);
-    }
-    .c-ent .pr-cta {
-      background:linear-gradient(135deg,#f59e0b,#d97706); color:white;
-      box-shadow:0 8px 24px rgba(245,158,11,0.25);
-    }
+    .pr-ck { font-size:14px; flex-shrink:0; margin-top:1px; }
+    .c-basic .pr-ck { color:rgba(255,255,255,0.30); }
+    .c-pro   .pr-ck { color:#38b6f5; }
+    .c-elite .pr-ck { color:#f59e0b; }
 
     /* Footer */
     .pr-footer {
-      text-align:center; padding:18px 24px;
+      text-align:center; padding:16px 24px 20px;
       border-top:1px solid rgba(255,255,255,0.06);
-      font-size:12px; color:rgba(255,255,255,0.25);
-      display:flex; align-items:center; justify-content:center; gap:16px;
-      flex-wrap:wrap;
+      font-size:12px; color:rgba(255,255,255,0.22);
+      display:flex; align-items:center; justify-content:center;
+      gap:20px; flex-wrap:wrap;
     }
     .pr-footer span { display:flex; align-items:center; gap:5px; }
   `;
@@ -1079,80 +1031,67 @@ function initPricing() {
 
         <div class="pr-head">
           <button class="pr-close" id="pr-close">✕</button>
-          <div class="pr-eyebrow">⚡ Pricing Plans</div>
-          <h2>Build AI Employees that<br/><em>work while you sleep</em></h2>
-          <p>No code required. Cancel anytime. Start automating today.</p>
-          <div class="pr-toggle-row">
-            <span class="pr-toggle-label active">Monthly</span>
-            <span class="pr-toggle-label">Annual <span class="pr-save-badge">Save 20%</span></span>
-          </div>
+          <div class="pr-eyebrow">🤖 AI Employee Plans</div>
+          <h2>Hire an AI Employee<br/>that works 24/7 for you</h2>
+          <p>No experience needed on your end. Just describe the task and your AI Employee handles it.</p>
         </div>
 
         <div class="pr-cards">
 
-          <!-- STANDARD -->
-          <div class="pr-card c-std">
-            <div class="pr-plan-label">Standard</div>
-            <div class="pr-price"><sup>$</sup>399<sub>/mo</sub></div>
+          <!-- BASIC -->
+          <div class="pr-card c-basic">
+            <div class="pr-avatar">🧑‍💻</div>
+            <div class="pr-emp-type">Entry Level</div>
+            <div class="pr-emp-title">Junior AI Employee</div>
+            <div class="pr-emp-sub">Fresh, fast & affordable. Handles everyday tasks without needing hand-holding.</div>
+            <div class="pr-price">$399 <span>/mo</span></div>
             <div class="pr-period">Billed monthly · Cancel anytime</div>
-            <div class="pr-credits">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-              50 Credits / Day
-            </div>
             <div class="pr-divider"></div>
             <ul class="pr-features">
-              <li><span class="ck">✦</span>50 daily credits · 1,500/month</li>
-              <li><span class="ck">✦</span>Standard & mid-level AI tasks</li>
-              <li><span class="ck">✦</span>Unlimited AI Employee builds</li>
-              <li><span class="ck">✦</span>Lead Scraper & Email Writer</li>
-              <li><span class="ck">✦</span>Outreach Agent included</li>
-              <li><span class="ck">✦</span>Priority email support</li>
+              <li><span class="pr-ck">✦</span>Build any Basic-tier AI Employee you need</li>
+              <li><span class="pr-ck">✦</span>Perfect for simple, repetitive tasks</li>
+              <li><span class="pr-ck">✦</span>Works on one task at a time</li>
+              <li><span class="pr-ck">✦</span>Standard processing speed</li>
+              <li><span class="pr-ck">✦</span>Email support included</li>
             </ul>
-            <button class="pr-cta">Get Started →</button>
           </div>
 
-          <!-- PRO (Popular) -->
+          <!-- PRO -->
           <div class="pr-card c-pro">
-            <div class="pr-popular">⭐ Most Popular</div>
-            <div class="pr-plan-label">Pro</div>
-            <div class="pr-price"><sup>$</sup>599<sub>/mo</sub></div>
+            <div class="pr-tag blue">⭐ Most Popular</div>
+            <div class="pr-avatar">👨‍💼</div>
+            <div class="pr-emp-type">Mid Level</div>
+            <div class="pr-emp-title">Pro AI Employee</div>
+            <div class="pr-emp-sub">Experienced, versatile & reliable. Handles complex multi-step workflows with ease.</div>
+            <div class="pr-price">$599 <span>/mo</span></div>
             <div class="pr-period">Billed monthly · Cancel anytime</div>
-            <div class="pr-credits">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-              100 Credits / Day
-            </div>
             <div class="pr-divider"></div>
             <ul class="pr-features">
-              <li><span class="ck">✦</span>100 daily credits · 3,000/month</li>
-              <li><span class="ck">✦</span>Advanced multi-step automation</li>
-              <li><span class="ck">✦</span>Full AI Employee customization</li>
-              <li><span class="ck">✦</span>Wingman & Scheduler agents</li>
-              <li><span class="ck">✦</span>Rollover up to 20 unused credits</li>
-              <li><span class="ck">✦</span>Priority chat & email support</li>
+              <li><span class="pr-ck">✦</span>Build any Pro-tier AI Employee you need</li>
+              <li><span class="pr-ck">✦</span>Handles complex multi-step tasks</li>
+              <li><span class="pr-ck">✦</span>Runs multiple tasks simultaneously</li>
+              <li><span class="pr-ck">✦</span>Faster processing & smarter decisions</li>
+              <li><span class="pr-ck">✦</span>Priority chat & email support</li>
             </ul>
-            <button class="pr-cta">Upgrade to Pro →</button>
           </div>
 
-          <!-- ENTERPRISE -->
-          <div class="pr-card c-ent">
-            <div class="pr-elite-tag">👑 Top Tier</div>
-            <div class="pr-plan-label">Enterprise</div>
-            <div class="pr-price"><sup>$</sup>999<sub>/mo</sub></div>
+          <!-- ELITE -->
+          <div class="pr-card c-elite">
+            <div class="pr-tag gold">👑 Top Tier</div>
+            <div class="pr-avatar">🧠</div>
+            <div class="pr-emp-type">Senior Level</div>
+            <div class="pr-emp-title">Elite AI Employee</div>
+            <div class="pr-emp-sub">The most advanced AI Employee. Zero limitations, maximum intelligence, elite results.</div>
+            <div class="pr-price">$999 <span>/mo</span></div>
             <div class="pr-period">Billed monthly · Cancel anytime</div>
-            <div class="pr-credits">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-              180 Credits / Day
-            </div>
             <div class="pr-divider"></div>
             <ul class="pr-features">
-              <li><span class="ck">✦</span>180 daily credits · 5,400/month</li>
-              <li><span class="ck">✦</span>All task types — zero restrictions</li>
-              <li><span class="ck">✦</span>High-end complex AI tasks</li>
-              <li><span class="ck">✦</span>Dedicated account manager</li>
-              <li><span class="ck">✦</span>Custom integrations on request</li>
-              <li><span class="ck">✦</span>White-glove onboarding included</li>
+              <li><span class="pr-ck">✦</span>Build any Elite-tier AI Employee you need</li>
+              <li><span class="pr-ck">✦</span>Zero task restrictions, full autonomy</li>
+              <li><span class="pr-ck">✦</span>Highest intelligence, best output quality</li>
+              <li><span class="pr-ck">✦</span>Dedicated account manager assigned</li>
+              <li><span class="pr-ck">✦</span>Custom integrations on request</li>
             </ul>
-            <button class="pr-cta">Go Enterprise →</button>
           </div>
 
         </div>
@@ -1160,8 +1099,8 @@ function initPricing() {
         <div class="pr-footer">
           <span>🔒 Secure payments</span>
           <span>↩ Cancel anytime</span>
-          <span>💬 24/7 support</span>
           <span>✅ 7-day money back</span>
+          <span>💬 24/7 support</span>
         </div>
 
       </div>
@@ -1183,219 +1122,6 @@ function closePricing() {
   if (ov) ov.classList.remove("open");
 }
 
-// ══════════════════════════════════════════════════════════
-//  SETTINGS — styles, html, functions (all inline)
-// ══════════════════════════════════════════════════════════
-function initSettings() {
-  // Styles
-  if (!document.getElementById("st-css")) {
-    const s = document.createElement("style");
-    s.id = "st-css";
-    s.textContent = `
-      #st-overlay {
-        display:none; position:fixed; inset:0; z-index:9999;
-        background:rgba(10,60,120,0.40);
-        backdrop-filter:blur(14px);
-        align-items:center; justify-content:center; padding:16px;
-      }
-      #st-overlay.open { display:flex; animation:stFade .2s ease; }
-      @keyframes stFade { from{opacity:0} to{opacity:1} }
-      #st-box {
-        background:rgba(255,255,255,0.97);
-        border-radius:24px; width:100%; max-width:440px;
-        box-shadow:0 20px 60px rgba(0,80,180,0.18);
-        font-family:'Inter',sans-serif; overflow:hidden;
-        animation:stPop .25s cubic-bezier(.22,.68,0,1.2);
-      }
-      @keyframes stPop {
-        from{opacity:0;transform:scale(.93) translateY(14px)}
-        to  {opacity:1;transform:scale(1)   translateY(0)}
-      }
-      .st-top {
-        display:flex; align-items:center; justify-content:space-between;
-        padding:20px 22px 18px; border-bottom:1px solid rgba(0,0,0,0.07);
-      }
-      .st-top h2 { font-size:17px; font-weight:800; color:#111; margin:0; }
-      .st-xbtn {
-        width:30px; height:30px; border-radius:50%;
-        background:rgba(0,0,0,0.07); border:none;
-        font-size:16px; cursor:pointer; color:#555;
-        display:flex; align-items:center; justify-content:center;
-      }
-      .st-xbtn:hover { background:rgba(0,0,0,0.13); }
-      .st-body { padding:20px 22px; max-height:70vh; overflow-y:auto; }
-      .st-sec { font-size:11px; font-weight:700; letter-spacing:1.4px; text-transform:uppercase; color:#bbb; margin-bottom:12px; display:block; }
-      .st-row { display:flex; gap:8px; align-items:center; margin-bottom:6px; }
-      .st-inp {
-        flex:1; padding:11px 14px; box-sizing:border-box;
-        border:1.5px solid rgba(0,0,0,0.10); border-radius:12px;
-        font-size:15px; font-family:'Inter',sans-serif; color:#111; outline:none; background:white;
-      }
-      .st-inp:focus { border-color:#38b6f5; box-shadow:0 0 0 3px rgba(56,182,245,0.15); }
-      .st-sbtn {
-        padding:11px 18px; background:#111; color:white; border:none;
-        border-radius:12px; font-size:14px; font-weight:600;
-        cursor:pointer; font-family:'Inter',sans-serif; white-space:nowrap;
-        display:flex; align-items:center; gap:5px;
-      }
-      .st-sbtn:hover{opacity:.85} .st-sbtn:disabled{opacity:.45;cursor:not-allowed}
-      .st-fb { font-size:13px; border-radius:10px; padding:8px 12px; margin-top:6px; display:none; }
-      .st-fb.ok  { background:rgba(34,197,94,.12); color:#15803d; display:block; }
-      .st-fb.err { background:rgba(239,68,68,.10); color:#b91c1c; display:block; }
-      .st-hr { height:1px; background:rgba(0,0,0,0.07); margin:20px 0; }
-      .st-dbox {
-        border:1.5px solid rgba(239,68,68,0.20); border-radius:14px;
-        padding:16px; background:rgba(239,68,68,0.03);
-      }
-      .st-dbox h3 { font-size:14px; font-weight:700; color:#dc2626; margin:0 0 6px; }
-      .st-dbox p  { font-size:13px; color:#888; margin:0 0 14px; line-height:1.5; }
-      .st-dbtn {
-        width:100%; padding:12px; background:#dc2626; color:white;
-        border:none; border-radius:50px; font-size:14px; font-weight:700;
-        cursor:pointer; font-family:'Inter',sans-serif;
-        display:flex; align-items:center; justify-content:center; gap:6px;
-      }
-      .st-dbtn:hover{background:#b91c1c} .st-dbtn:disabled{opacity:.5;cursor:not-allowed}
-      #dc-overlay {
-        display:none; position:fixed; inset:0; z-index:10000;
-        background:rgba(0,0,0,0.45); backdrop-filter:blur(8px);
-        align-items:center; justify-content:center; padding:16px;
-      }
-      #dc-overlay.open { display:flex; }
-      #dc-box {
-        background:white; border-radius:20px; padding:26px 22px;
-        max-width:360px; width:100%;
-        box-shadow:0 20px 60px rgba(0,0,0,0.22);
-        font-family:'Inter',sans-serif;
-        animation:stPop .22s cubic-bezier(.22,.68,0,1.2);
-      }
-      .dc-icon{font-size:28px;text-align:center;margin-bottom:10px}
-      .dc-title{font-size:17px;font-weight:800;color:#111;text-align:center;margin-bottom:6px}
-      .dc-desc{font-size:13px;color:#777;text-align:center;line-height:1.5;margin-bottom:16px}
-      .dc-inp{width:100%;padding:11px 14px;box-sizing:border-box;border:1.5px solid rgba(0,0,0,0.12);border-radius:12px;font-size:14px;font-family:'Inter',sans-serif;outline:none;margin-bottom:6px}
-      .dc-inp:focus{border-color:#dc2626;box-shadow:0 0 0 3px rgba(220,38,38,0.12)}
-      .dc-err{font-size:12px;color:#dc2626;min-height:16px;margin-bottom:10px}
-      .dc-btns{display:flex;gap:8px}
-      .dc-cbtn{flex:1;padding:11px;background:rgba(0,0,0,0.06);border:none;border-radius:50px;font-size:14px;font-weight:600;color:#555;cursor:pointer;font-family:'Inter',sans-serif}
-      .dc-okbtn{flex:1;padding:11px;background:#dc2626;border:none;border-radius:50px;font-size:14px;font-weight:700;color:white;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:5px}
-      .dc-okbtn:hover{background:#b91c1c} .dc-okbtn:disabled{opacity:.5;cursor:not-allowed}
-      .st-spin{width:13px;height:13px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:stSpinR .7s linear infinite;flex-shrink:0}
-      @keyframes stSpinR{to{transform:rotate(360deg)}}
-    `;
-    document.head.appendChild(s);
-  }
-
-  // HTML
-  if (!document.getElementById("st-overlay")) {
-    document.body.insertAdjacentHTML("beforeend", `
-      <div id="st-overlay">
-        <div id="st-box">
-          <div class="st-top">
-            <h2>⚙️ Account Settings</h2>
-            <button class="st-xbtn" id="st-xbtn">✕</button>
-          </div>
-          <div class="st-body">
-            <span class="st-sec">Username</span>
-            <div class="st-row">
-              <input class="st-inp" id="st-uname" type="text" placeholder="Enter new username" maxlength="20"/>
-              <button class="st-sbtn" id="st-save">Save</button>
-            </div>
-            <div class="st-fb" id="st-fb"></div>
-            <div class="st-hr"></div>
-            <span class="st-sec">Danger Zone</span>
-            <div class="st-dbox">
-              <h3>🗑️ Delete Account</h3>
-              <p>This action is permanent and cannot be undone. Your account, profile, and all associated data will be deleted forever.</p>
-              <button class="st-dbtn" id="st-delbtn">Delete My Account</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div id="dc-overlay">
-        <div id="dc-box">
-          <div class="dc-icon">⚠️</div>
-          <div class="dc-title">Delete Your Account?</div>
-          <div class="dc-desc">Enter your <strong>password</strong> to confirm.<br/>If you signed in with Google, leave it empty.</div>
-          <input class="dc-inp" id="dc-pw" type="password" placeholder="Enter your password to confirm"/>
-          <div class="dc-err" id="dc-err"></div>
-          <div style="font-size:11px;color:#bbb;margin-bottom:12px;">⚠️ This will permanently delete your account and all your data from our servers.</div>
-          <div class="dc-btns">
-            <button class="dc-cbtn" id="dc-cancel">Cancel</button>
-            <button class="dc-okbtn" id="dc-ok">Delete Forever</button>
-          </div>
-        </div>
-      </div>
-    `);
-
-    // Wire events — ek baar
-    $("st-xbtn").onclick = closeSettings;
-    $("st-overlay").onclick = e => { if(e.target===$("st-overlay")) closeSettings(); };
-
-    $("st-save").onclick = async () => {
-      const val = $("st-uname").value.trim();
-      const fb = $("st-fb");
-      fb.className = "st-fb";
-      if(val.length<3){fb.textContent="Min 3 characters.";fb.className="st-fb err";return;}
-      if(val.length>20){fb.textContent="Max 20 characters.";fb.className="st-fb err";return;}
-      if(!/^[a-zA-Z0-9_]+$/.test(val)){fb.textContent="Only letters, numbers, underscore.";fb.className="st-fb err";return;}
-      $("st-save").disabled=true;
-      $("st-save").innerHTML='<span class="st-spin"></span>Saving…';
-      try {
-        const user = auth.currentUser;
-        await updateDoc(doc(db,"users",user.uid),{username:val.toLowerCase(),usernameDisplay:val});
-        const ns = document.querySelector("#profile-btn span");
-        if(ns) ns.textContent = val;
-        const pn = document.querySelector(".pd-name");
-        if(pn) pn.textContent = "@"+val;
-        fb.textContent="✅ Username updated!"; fb.className="st-fb ok";
-        showToast("✅ Username updated!");
-      } catch(e) {
-        fb.textContent="Error. Try again."; fb.className="st-fb err";
-      } finally {
-        $("st-save").disabled=false; $("st-save").textContent="Save";
-      }
-    };
-
-    $("st-uname").onkeydown = e => { if(e.key==="Enter") $("st-save").onclick(); };
-
-    $("st-delbtn").onclick = () => {
-      $("dc-pw").value=""; $("dc-err").textContent="";
-      $("dc-overlay").classList.add("open");
-    };
-
-    $("dc-cancel").onclick = () => $("dc-overlay").classList.remove("open");
-    $("dc-overlay").onclick = e => { if(e.target===$("dc-overlay")) $("dc-overlay").classList.remove("open"); };
-
-    $("dc-ok").onclick = async () => {
-      const user = auth.currentUser; if(!user) return;
-      const pw = $("dc-pw").value;
-      $("dc-err").textContent="";
-      $("dc-ok").disabled=true;
-      $("dc-ok").innerHTML='<span class="st-spin"></span>Deleting…';
-      try {
-        const isGoogle = user.providerData.some(p=>p.providerId==="google.com");
-        if(isGoogle){
-          await reauthenticateWithPopup(user, new GoogleAuthProvider());
-        } else {
-          if(!pw){$("dc-err").textContent="Password daalo.";$("dc-ok").disabled=false;$("dc-ok").textContent="Delete Forever";return;}
-          await reauthenticateWithCredential(user, EmailAuthProvider.credential(user.email,pw));
-        }
-        await deleteDoc(doc(db,"users",user.uid)).catch(()=>{});
-        await deleteUser(user);
-        $("dc-overlay").classList.remove("open");
-        closeSettings();
-        showToast("Account deleted. Goodbye! 👋");
-        setTimeout(()=>window.location.reload(),2000);
-      } catch(e) {
-        const errs={"auth/wrong-password":"Incorrect password. Please try again.","auth/too-many-requests":"Too many attempts. Please try again later.","auth/requires-recent-login":"Please log out and log back in first.","auth/popup-closed-by-user":"Google sign-in was cancelled."};
-        $("dc-err").textContent=errs[e.code]||"Error. Try again.";
-        $("dc-ok").disabled=false; $("dc-ok").textContent="Delete Forever";
-      }
-    };
-
-    $("dc-pw").onkeydown = e => { if(e.key==="Enter") $("dc-ok").onclick(); };
-  }
-}
 
 function openSettings() {
   initSettings();
