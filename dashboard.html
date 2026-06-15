@@ -311,29 +311,35 @@
   <div id="vnus-toast"></div>
 
   <script type="module">
-    import { initializeApp, getApps }
+    import { getApps }
       from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut,
+    import { getAuth, signOut,
              GoogleAuthProvider, reauthenticateWithPopup,
              reauthenticateWithCredential, EmailAuthProvider, deleteUser }
       from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, updateDoc, deleteDoc,
-             serverTimestamp }
+    import { getFirestore, doc, getDoc, updateDoc, deleteDoc }
       from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // ── Firebase config — AUTH.JS SE COPY KARO ─────────────
-    const firebaseConfig = {
-      apiKey:            "AIzaSyCOPpUgrSI20gr1zhr_knts2if6gEFr3XE",
-      authDomain:        "vnusai.firebaseapp.com",
-      projectId:         "vnusai",
-      storageBucket:     "vnusai.firebasestorage.app",
-      messagingSenderId: "380179126596",
-      appId:             "1:380179126596:web:4904df078f13317c5f11",
-    };
+    // ── auth.js ne Firebase already init kar diya hai ───────
+    // Hum bas existing app use karte hain
+    async function waitForFirebase() {
+      let tries = 0;
+      while (!getApps().length && tries < 30) {
+        await new Promise(r => setTimeout(r, 100));
+        tries++;
+      }
+      if (!getApps().length) {
+        window.location.href = "index.html";
+        return null;
+      }
+      return getApps()[0];
+    }
 
-    const app  = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db   = getFirestore(app);
+    const fbApp = await waitForFirebase();
+    if (!fbApp) throw new Error("Firebase not ready");
+
+    const auth = getAuth(fbApp);
+    const db   = getFirestore(fbApp);
 
     // ── Helpers ─────────────────────────────────────────────
     const $ = id => document.getElementById(id);
