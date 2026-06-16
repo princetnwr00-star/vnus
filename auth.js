@@ -852,6 +852,7 @@ function init() {
   // Auth state — authStateReady pehle, phir observer
   auth.authStateReady().then(async () => {
     const user = auth.currentUser;
+    window.__vnusUser = user || null;
     if (user) {
       const done = await checkOnboarding(user);
       if (done) { await showLoggedIn(user); }
@@ -862,6 +863,7 @@ function init() {
 
   // Login/logout changes ke liye
   onAuthStateChanged(auth, async user => {
+    window.__vnusUser = user || null;
     if (user) {
       const done = await checkOnboarding(user);
       if (done) await showLoggedIn(user);
@@ -1339,6 +1341,11 @@ function closeSettings() {
   if(ov) ov.classList.remove("open");
 }
 
+// Expose Firebase modules for ai-employee.js
+import * as _firebaseAuth from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import * as _firebaseApp  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+window.__firebaseModules__ = { ..._firebaseApp, ..._firebaseAuth };
+
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", init);
 } else {
@@ -1346,3 +1353,4 @@ if (document.readyState === "loading") {
 }
 
 export { openModal, closeModal };
+window.vnusOpenModal = openModal;
