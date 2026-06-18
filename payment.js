@@ -3,7 +3,7 @@
 //  🔴 APNI CLIENT KEY NEECHE DAALO
 // ═══════════════════════════════════════════════════════════
 
-const CROSSMINT_CLIENT_KEY = "YOUR_CLIENT_KEY_HERE";
+const CROSSMINT_CLIENT_KEY = "ck_staging_5pK9bWiYBS6aNTRZrQW1VLNvA1Vw9eDHjY66HAycGBy5DYuQTemqDGu1VqUooMdBjVjmNtr6Y6wSmos5fMw1DftRAnRShDbksq4BjEaMp3qYxy5yWHMuJvRMozckQdeiWSgzfaMHh836LCdzXcDiZfPiq3tV4yhvL11SbmcSF5r6Mvu3hAKYcLoZtf4a4h1uKuduD8aY8NAkrvdf1484Ljrd";
 // 👆 Yahan apni key daalo: ck_staging_xxxxxxxxxx
 
 const PLANS = {
