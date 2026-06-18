@@ -882,7 +882,7 @@ function buildCards(candidates) {
       <div class="ae-cand-divider"></div>
       <div class="ae-cand-salary-label">Salary</div>
       <div class="ae-cand-price">$${c.price}<span>/mo</span></div>
-      <button class="ae-hire-btn" onclick="window.vnusHire('${c.name.replace(/'/g,"\\'")}','${c.price}')">Hire →</button>
+      <button class="ae-hire-btn" onclick="window.vnusHire('${c.name.replace(/'/g,"\\'")}','${c.price}','${c.emoji}','${(c.role||'').replace(/'/g,"\\'")}','${c.level}')">Hire →</button>
     </div>
   `).join("");
 }
@@ -917,13 +917,18 @@ function openBriefPopup(prefill) {
 // ══════════════════════════════════════════════════════════
 //  HIRE
 // ══════════════════════════════════════════════════════════
-window.vnusHire = function(name, price) {
+window.vnusHire = function(name, price, emoji, role, level) {
   closeAll();
-  const t = document.getElementById("vnus-toast");
-  if (t) {
-    t.textContent = `🎉 ${name} hired! Payment coming soon.`;
-    t.classList.add("show");
-    setTimeout(() => t.classList.remove("show"), 3500);
+  // payment.js ka openPayment call karo
+  if (window.vnusOpenPayment) {
+    window.vnusOpenPayment(name, role || level || "", parseInt(price), emoji || "🤖");
+  } else {
+    const t = document.getElementById("vnus-toast");
+    if (t) {
+      t.textContent = "⏳ Payment loading... Please try again.";
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2500);
+    }
   }
 };
 
